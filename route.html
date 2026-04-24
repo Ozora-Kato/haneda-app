@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HANEDA — ルート案内</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="flow-hint">③ 結果UI(ルート表示)</div>
+<div class="stage">
+  <div class="phone">
+    <div class="screen screen-route">
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 16 11" fill="none"><path d="M1 7c0-.6.4-1 1-1h1c.6 0 1 .4 1 1v3c0 .6-.4 1-1 1H2c-.6 0-1-.4-1-1V7zm5-2c0-.6.4-1 1-1h1c.6 0 1 .4 1 1v5c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V5zm5-3c0-.6.4-1 1-1h1c.6 0 1 .4 1 1v8c0 .6-.4 1-1 1h-1c-.6 0-1-.4-1-1V2z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 16 11" fill="none"><path d="M8 2c2.2 0 4.2.8 5.8 2.2l-1.4 1.4C11.1 4.5 9.6 4 8 4s-3.1.5-4.4 1.6L2.2 4.2C3.8 2.8 5.8 2 8 2zM8 6c1.1 0 2.1.4 2.9 1l-1.4 1.4C9.1 8.1 8.6 8 8 8c-.6 0-1.1.1-1.5.4L5.1 7c.8-.6 1.8-1 2.9-1zm0 3c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 22 11" fill="none"><rect x="1" y="1" width="18" height="9" rx="2" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="16" height="7" rx="1" fill="currentColor"/><rect x="20" y="4" width="1.5" height="3" rx="0.5" fill="currentColor" opacity="0.4"/></svg>
+        </div>
+      </div>
+
+      <div class="sub-header">
+        <a href="main.html" class="icon-btn" aria-label="back">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        <div class="title">ルート案内</div>
+        <div class="spacer"></div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-left">
+          <div class="lb">搭乗までの時間</div>
+          <div class="big">02<span class="u">時間</span>18<span class="u">分</span></div>
+          <div class="sub">搭乗開始 12:30 / 出発 13:00</div>
+        </div>
+        <div class="info-right">
+          <div class="lb">搭乗口</div>
+          <div class="gate">112</div>
+        </div>
+      </div>
+
+      <div class="map-panel">
+        <div class="map-bg"></div>
+        <div class="map-grid"></div>
+        <div class="map-buildings">
+          <div class="bldg bldg1"></div>
+          <div class="bldg bldg2"></div>
+          <div class="bldg bldg3"></div>
+          <div class="bldg bldg4"></div>
+          <div class="bldg bldg5"></div>
+          <div class="bldg bldg6"></div>
+          <div class="bldg bldg7"></div>
+        </div>
+
+        <svg class="route-svg" viewBox="0 0 280 280" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="routeGrad" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0" stop-color="#3d5cc8"/>
+              <stop offset="1" stop-color="#2844a0"/>
+            </linearGradient>
+          </defs>
+          <path d="M 60 240 L 90 210 L 120 180 L 140 150 L 170 125 L 195 100 L 215 80"
+            stroke="url(#routeGrad)" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <circle cx="60" cy="240" r="6" fill="#2844a0"/>
+          <circle cx="60" cy="240" r="10" fill="#2844a0" fill-opacity="0.25"/>
+        </svg>
+
+        <div class="map-chip checkpoint">
+          <div>保安検査場</div>
+          <div class="s">待ち時間: 約5分</div>
+        </div>
+        <div class="map-chip gate">
+          <div class="n">112</div>
+          <div class="l">搭乗口</div>
+        </div>
+
+        <div class="map-plane">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+        </div>
+
+        <div class="map-icon i1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-3V6a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg></div>
+        <div class="map-icon i2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="3"/><circle cx="15" cy="7" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></div>
+        <div class="map-icon i3"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+
+        <div class="floor-picker">
+          <div class="fl">4F</div>
+          <div class="fl active">3F</div>
+          <div class="fl">2F</div>
+        </div>
+
+        <div class="current-loc">
+          <span class="dot"></span>
+          <span>現在地</span>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat">
+          <span class="l">距離</span>
+          <span class="v">約 450m</span>
+        </div>
+        <div class="divider-v"></div>
+        <div class="stat">
+          <span class="l">徒歩</span>
+          <span class="v">約 18分 (予測)</span>
+        </div>
+      </div>
+
+      <a href="nav.html" class="btn-start">
+        ルート案内を開始
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+
+      <a href="#" class="route-link">ルート詳細を確認</a>
+
+      <div class="home-ind"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
