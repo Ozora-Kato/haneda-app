@@ -81,13 +81,25 @@ button { font-family: inherit; cursor: pointer; }
   background: var(--white);
 }
 
-/* Mobile: full screen app */
+/* Mobile: real smartphone Safari — fullscreen, no simulated chrome */
 @media (max-width: 480px) {
-  html, body { background: var(--white); }
-  .stage { padding: 0; min-height: 100vh; }
+  html, body {
+    background: var(--white);
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  .stage {
+    padding: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+  }
   .phone {
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     border-radius: 0;
     padding: 0;
     box-shadow: none;
@@ -95,6 +107,54 @@ button { font-family: inherit; cursor: pointer; }
   }
   .phone::before { display: none; }
   .screen { border-radius: 0; }
+
+  /* Hide simulated phone chrome — real device shows its own */
+  .status-bar { display: none; }
+  .home-ind { display: none; }
+
+  /* Respect device safe areas (notch, home indicator) */
+  .screen-main,
+  .screen-route,
+  .screen-results,
+  .screen-details,
+  .screen-nav {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .loc-search {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+  }
+  .drawer-header {
+    padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  }
+  .drawer-close {
+    top: calc(24px + env(safe-area-inset-top, 0px));
+  }
+
+  /* Bottom safe-area for fixed bars */
+  .bottom-nav {
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    height: calc(68px + env(safe-area-inset-bottom, 0px));
+  }
+  .nav-bottom {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+  .fixed-start {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+  .loc-sheet {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .login-actions {
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Scrollable bodies need extra bottom padding for grown fixed bars */
+  .details-body {
+    padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+  }
+  .nav-body {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* ---------- Status bar ---------- */
