@@ -33,71 +33,90 @@
 
       <div class="nav-body">
 
-        <!-- 1. TOP: Interior map -->
+        <!-- 1. TOP: Wide-area transit map (Akihabara → Haneda) -->
         <div class="nav-map">
-          <svg class="nav-map-svg" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
-            <!-- Background -->
-            <rect width="320" height="200" fill="#eef2f7"/>
-            <!-- Airside (beyond security) tinted -->
-            <rect x="180" y="0" width="140" height="200" fill="#e5ecf5"/>
+          <svg class="nav-map-svg" viewBox="0 0 288 200" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="bayGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#c5dcee"/>
+                <stop offset="1" stop-color="#a5c1dc"/>
+              </linearGradient>
+            </defs>
 
-            <!-- Main horizontal corridor -->
-            <rect x="0" y="80" width="320" height="40" fill="#ffffff" stroke="#d8dde6" stroke-width="0.5"/>
-            <!-- Vertical connectors -->
-            <rect x="90" y="20" width="40" height="160" fill="#ffffff" stroke="#d8dde6" stroke-width="0.5"/>
-            <rect x="220" y="20" width="40" height="160" fill="#ffffff" stroke="#d8dde6" stroke-width="0.5"/>
+            <!-- Land background -->
+            <rect width="288" height="200" fill="#e8ede4"/>
 
-            <!-- Shops / rooms -->
-            <rect x="14" y="20" width="70" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
-            <rect x="136" y="20" width="78" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
-            <rect x="266" y="20" width="48" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
-            <rect x="14" y="125" width="70" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
-            <rect x="136" y="125" width="78" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
-            <rect x="266" y="125" width="48" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
+            <!-- Tokyo Bay (bottom-right) -->
+            <path d="M 170 200 L 170 160 Q 200 148 230 148 L 250 130 L 288 122 L 288 200 Z" fill="url(#bayGrad)"/>
 
-            <!-- Security checkpoint line -->
-            <line x1="180" y1="10" x2="180" y2="190" stroke="#ff9248" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.7"/>
+            <!-- Haneda Airport island -->
+            <path d="M 225 150 L 268 146 L 282 168 L 268 190 L 230 188 Z" fill="#d6dde6" stroke="#b4bcc8" stroke-width="0.4"/>
+            <rect x="242" y="163" width="36" height="2" fill="#a0a8b8" transform="rotate(-8 260 164)"/>
 
-            <!-- Shop labels -->
-            <text x="49" y="50" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">免税店</text>
-            <text x="175" y="50" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">カフェ</text>
-            <text x="290" y="50" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">ラウンジ</text>
-            <text x="49" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">書店</text>
-            <text x="175" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">レストラン</text>
-            <text x="290" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">売店</text>
-
-            <!-- Route path (traveled portion — lighter) -->
-            <path d="M 15 100 L 50 100" fill="none" stroke="#a9bae5" stroke-width="4" stroke-linecap="round"/>
-            <!-- Route path (remaining — solid navy) -->
-            <path d="M 50 100 L 110 100 L 110 45 L 200 45 L 200 100 L 280 100 L 280 75"
-              fill="none" stroke="#2844a0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-
-            <!-- Security checkpoint marker -->
-            <g transform="translate(180, 100)">
-              <circle r="9" fill="#ffffff" stroke="#ff9248" stroke-width="2"/>
-              <text y="3" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#ff9248">安</text>
+            <!-- Subtle road network -->
+            <g opacity="0.35" stroke="#ffffff" stroke-linecap="round" fill="none">
+              <path d="M 0 30 L 288 60" stroke-width="1.8"/>
+              <path d="M 0 95 L 180 140" stroke-width="1.8"/>
+              <path d="M 70 0 L 100 200" stroke-width="1.3"/>
+              <path d="M 180 0 L 160 160" stroke-width="1.3"/>
             </g>
 
-            <!-- Destination gate pin -->
-            <g transform="translate(280, 65)">
+            <!-- Parks -->
+            <ellipse cx="100" cy="26" rx="26" ry="12" fill="#d0e2be" opacity="0.75"/>
+            <ellipse cx="190" cy="68" rx="22" ry="10" fill="#d0e2be" opacity="0.7"/>
+
+            <!-- Area labels -->
+            <text x="25" y="20" font-family="Inter" font-size="8" font-weight="600" fill="#8b94a8">秋葉原</text>
+            <text x="130" y="90" font-family="Inter" font-size="8" font-weight="600" fill="#8b94a8">東京</text>
+            <text x="205" y="185" font-family="Inter" font-size="8" font-weight="600" fill="#ffffff">東京湾</text>
+
+            <!-- Railway: JR Yamanote (Akihabara → Shinagawa) -->
+            <path d="M 45 55 Q 68 72 88 88 T 140 115"
+              stroke="#80ba27" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            <!-- Railway: Keikyu (Shinagawa → Haneda station) -->
+            <path d="M 140 115 Q 168 128 195 140 T 235 155"
+              stroke="#e82c1f" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            <!-- Walk (Haneda station → Gate 112) -->
+            <path d="M 235 155 L 260 168"
+              stroke="#6a768a" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="4 3"/>
+
+            <!-- Station: 品川 (transfer) -->
+            <circle cx="140" cy="115" r="7" fill="#ffffff" stroke="#2844a0" stroke-width="2.5"/>
+            <circle cx="140" cy="115" r="2.5" fill="#2844a0"/>
+            <rect x="115" y="122" width="50" height="13" rx="3" fill="#ffffff" stroke="#d8dde6" stroke-width="0.5"/>
+            <text x="140" y="131" text-anchor="middle" font-family="Inter" font-size="7.5" font-weight="700" fill="#2844a0">品川 乗換</text>
+
+            <!-- Station: 羽田空港第2T -->
+            <circle cx="235" cy="155" r="6" fill="#ffffff" stroke="#e82c1f" stroke-width="2.5"/>
+            <circle cx="235" cy="155" r="2" fill="#e82c1f"/>
+            <rect x="198" y="137" width="78" height="13" rx="3" fill="#ffffff" stroke="#d8dde6" stroke-width="0.5"/>
+            <text x="237" y="146" text-anchor="middle" font-family="Inter" font-size="7" font-weight="600" fill="#2844a0">羽田空港 第2T</text>
+
+            <!-- Destination gate pin (112) -->
+            <g transform="translate(260, 175)">
               <path d="M 0 -14 C -8 -14 -14 -8 -14 0 C -14 10 0 20 0 20 C 0 20 14 10 14 0 C 14 -8 8 -14 0 -14 Z" fill="#2844a0"/>
               <circle r="7" fill="#ffffff"/>
               <text y="2" text-anchor="middle" font-family="Inter" font-size="7" font-weight="700" fill="#2844a0">112</text>
             </g>
+
+            <!-- Line name labels -->
+            <rect x="68" y="70" width="44" height="11" rx="2" fill="#ffffff" opacity="0.92"/>
+            <text x="90" y="78" text-anchor="middle" font-family="Inter" font-size="7" font-weight="700" fill="#80ba27">JR山手線</text>
+            <rect x="170" y="125" width="32" height="11" rx="2" fill="#ffffff" opacity="0.92"/>
+            <text x="186" y="133" text-anchor="middle" font-family="Inter" font-size="7" font-weight="700" fill="#e82c1f">京急線</text>
           </svg>
 
-          <!-- Current location pulsing pin (HTML overlay for animation) -->
-          <div class="nav-current-pin" style="top: 50%; left: 15.6%;">
-            <div class="cone"></div>
+          <!-- Current location (Akihabara) pulsing overlay -->
+          <div class="nav-current-pin" style="top: 27.5%; left: 15.6%;">
             <div class="pulse"></div>
             <div class="pulse-dot"></div>
           </div>
 
-          <div class="nav-map-floor">3F 国内線</div>
+          <div class="nav-map-floor">広域マップ</div>
           <button class="nav-map-recenter" aria-label="recenter">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
           </button>
-          <div class="nav-map-scale">50m</div>
+          <div class="nav-map-scale">5km</div>
         </div>
 
         <!-- 2. MIDDLE: Direction -->
@@ -109,16 +128,16 @@
             </svg>
           </div>
           <div class="dir-text">
-            <div class="sub">直進</div>
-            <div class="main"><span>120</span>m</div>
+            <div class="sub">秋葉原駅 3番線へ</div>
+            <div class="main"><span>120</span>m 直進</div>
           </div>
           <div class="dir-next">
             <div class="label">次</div>
             <div class="val">
-              右折
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17V7h10"/><polyline points="13 11 17 7 13 3"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h12l-4 -4"/><path d="M16 11l-4 4"/><path d="M4 4v14"/></svg>
+              乗車
             </div>
-            <div class="dist">70m先</div>
+            <div class="dist">山手線 09:41発</div>
           </div>
         </div>
 
@@ -126,55 +145,55 @@
         <div class="nav-route-info">
           <div class="route-summary">
             <div class="left">
-              <span class="main">あと 18分</span>
-              <span class="sub">450m · 搭乗口 112 · 10:33 到着予定</span>
+              <span class="main">あと 52分</span>
+              <span class="sub">19.4km · 搭乗口 112 · 10:33 到着予定</span>
             </div>
             <div class="right">
-              <div>進捗 30%</div>
-              <div class="progress-track"><div class="fill"></div></div>
+              <div>進捗 5%</div>
+              <div class="progress-track"><div class="fill" style="width: 5%;"></div></div>
             </div>
           </div>
 
-          <div class="route-steps-label">現在のルート</div>
+          <div class="route-steps-label">秋葉原駅 → 搭乗口 112</div>
           <div class="route-steps">
             <div class="step current">
               <span class="dot"></span>
               <div class="body">
-                <div class="t">現在地</div>
-                <div class="s">国内線ロビー 3F</div>
+                <div class="t">秋葉原駅</div>
+                <div class="s">現在地 · JR山手線 3番線 09:41発</div>
               </div>
               <div class="meta">
-                0m
+                0km
               </div>
             </div>
             <div class="step">
               <span class="dot"></span>
               <div class="body">
-                <div class="t">保安検査場</div>
-                <div class="s">待ち時間 約 5分</div>
+                <div class="t">品川駅</div>
+                <div class="s">09:58着 · 乗換4分 · 京急2番線</div>
               </div>
               <div class="meta">
-                150m
+                15km
               </div>
             </div>
             <div class="step">
               <span class="dot"></span>
               <div class="body">
-                <div class="t">3F コンコース</div>
-                <div class="s">制限エリア入口</div>
+                <div class="t">羽田空港 第2ターミナル駅</div>
+                <div class="s">10:15着 · 京急エアポート快特</div>
               </div>
               <div class="meta">
-                300m
+                19km
               </div>
             </div>
             <div class="step end">
               <span class="dot"></span>
               <div class="body">
                 <div class="t">搭乗口 112</div>
-                <div class="s">NH123 ロンドン (LHR) 行</div>
+                <div class="s">NH123 ロンドン (LHR) 行 · 徒歩18分</div>
               </div>
               <div class="meta">
-                450m
+                19.4km
               </div>
             </div>
           </div>
