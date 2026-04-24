@@ -31,52 +31,156 @@
         </button>
       </div>
 
-      <div class="nav-arrow-card">
-        <div class="arrow-circle">
-          <svg width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-        </div>
-        <div class="nav-direction">直進</div>
-        <div class="nav-distance">
-          あと <span class="v">120</span> m
-        </div>
-      </div>
+      <div class="nav-body">
 
-      <div class="nav-gate-card">
-        <div class="nav-gate-row">
-          <span class="lb">搭乗口 112</span>
-          <span class="rt">
-            <span>搭乗開始 <span class="v">12:30</span></span>
-            <span>出発 <span class="v">13:00</span></span>
-          </span>
-        </div>
-        <div class="nav-gate-progress">
-          <span class="lb">目的地まで</span>
-          <span class="v"><strong>あと 18</strong>分</span>
-        </div>
-        <div class="progress-bar"><div class="fill"></div></div>
-      </div>
+        <!-- 1. TOP: Interior map -->
+        <div class="nav-map">
+          <svg class="nav-map-svg" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+            <!-- Background -->
+            <rect width="320" height="200" fill="#eef2f7"/>
+            <!-- Airside (beyond security) tinted -->
+            <rect x="180" y="0" width="140" height="200" fill="#e5ecf5"/>
 
-      <a href="route.html" class="nav-gate-link">
-        <div class="ar">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-        </div>
-        <div class="num">112</div>
-        <div class="tx">
-          <div class="t">搭乗口</div>
-          <div class="s">Gate</div>
-        </div>
-        <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
+            <!-- Main horizontal corridor -->
+            <rect x="0" y="80" width="320" height="40" fill="#ffffff" stroke="#d8dde6" stroke-width="0.5"/>
+            <!-- Vertical connectors -->
+            <rect x="90" y="20" width="40" height="160" fill="#ffffff" stroke="#d8dde6" stroke-width="0.5"/>
+            <rect x="220" y="20" width="40" height="160" fill="#ffffff" stroke="#d8dde6" stroke-width="0.5"/>
 
-      <div class="nav-corridor">
-        <div class="corridor-walls"></div>
-        <div class="corridor-arrows">
-          <svg class="corridor-arrow a1" viewBox="0 0 80 20" fill="currentColor"><polygon points="0 20 40 0 80 20 65 20 40 8 15 20"/></svg>
-          <svg class="corridor-arrow a2" viewBox="0 0 80 20" fill="currentColor"><polygon points="0 20 40 0 80 20 65 20 40 8 15 20"/></svg>
-          <svg class="corridor-arrow a3" viewBox="0 0 80 20" fill="currentColor"><polygon points="0 20 40 0 80 20 65 20 40 8 15 20"/></svg>
-          <svg class="corridor-arrow a4" viewBox="0 0 80 20" fill="currentColor"><polygon points="0 20 40 0 80 20 65 20 40 8 15 20"/></svg>
+            <!-- Shops / rooms -->
+            <rect x="14" y="20" width="70" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
+            <rect x="136" y="20" width="78" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
+            <rect x="266" y="20" width="48" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
+            <rect x="14" y="125" width="70" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
+            <rect x="136" y="125" width="78" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
+            <rect x="266" y="125" width="48" height="55" fill="#f7f9fc" stroke="#d8dde6" stroke-width="0.5" rx="2"/>
+
+            <!-- Security checkpoint line -->
+            <line x1="180" y1="10" x2="180" y2="190" stroke="#ff9248" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.7"/>
+
+            <!-- Shop labels -->
+            <text x="49" y="50" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">免税店</text>
+            <text x="175" y="50" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">カフェ</text>
+            <text x="290" y="50" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">ラウンジ</text>
+            <text x="49" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">書店</text>
+            <text x="175" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">レストラン</text>
+            <text x="290" y="155" text-anchor="middle" font-family="Inter" font-size="8" fill="#8b94a8">売店</text>
+
+            <!-- Route path (traveled portion — lighter) -->
+            <path d="M 15 100 L 50 100" fill="none" stroke="#a9bae5" stroke-width="4" stroke-linecap="round"/>
+            <!-- Route path (remaining — solid navy) -->
+            <path d="M 50 100 L 110 100 L 110 45 L 200 45 L 200 100 L 280 100 L 280 75"
+              fill="none" stroke="#2844a0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- Security checkpoint marker -->
+            <g transform="translate(180, 100)">
+              <circle r="9" fill="#ffffff" stroke="#ff9248" stroke-width="2"/>
+              <text y="3" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#ff9248">安</text>
+            </g>
+
+            <!-- Destination gate pin -->
+            <g transform="translate(280, 65)">
+              <path d="M 0 -14 C -8 -14 -14 -8 -14 0 C -14 10 0 20 0 20 C 0 20 14 10 14 0 C 14 -8 8 -14 0 -14 Z" fill="#2844a0"/>
+              <circle r="7" fill="#ffffff"/>
+              <text y="2" text-anchor="middle" font-family="Inter" font-size="7" font-weight="700" fill="#2844a0">112</text>
+            </g>
+          </svg>
+
+          <!-- Current location pulsing pin (HTML overlay for animation) -->
+          <div class="nav-current-pin" style="top: 50%; left: 15.6%;">
+            <div class="cone"></div>
+            <div class="pulse"></div>
+            <div class="pulse-dot"></div>
+          </div>
+
+          <div class="nav-map-floor">3F 国内線</div>
+          <button class="nav-map-recenter" aria-label="recenter">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
+          </button>
+          <div class="nav-map-scale">50m</div>
         </div>
-      </div>
+
+        <!-- 2. MIDDLE: Direction -->
+        <div class="nav-direction-panel">
+          <div class="arrow-circle-sm">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"/>
+              <polyline points="5 12 12 5 19 12"/>
+            </svg>
+          </div>
+          <div class="dir-text">
+            <div class="sub">直進</div>
+            <div class="main"><span>120</span>m</div>
+          </div>
+          <div class="dir-next">
+            <div class="label">次</div>
+            <div class="val">
+              右折
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17V7h10"/><polyline points="13 11 17 7 13 3"/></svg>
+            </div>
+            <div class="dist">70m先</div>
+          </div>
+        </div>
+
+        <!-- 3. BOTTOM: Route info / progress -->
+        <div class="nav-route-info">
+          <div class="route-summary">
+            <div class="left">
+              <span class="main">あと 18分</span>
+              <span class="sub">450m · 搭乗口 112 · 10:33 到着予定</span>
+            </div>
+            <div class="right">
+              <div>進捗 30%</div>
+              <div class="progress-track"><div class="fill"></div></div>
+            </div>
+          </div>
+
+          <div class="route-steps-label">現在のルート</div>
+          <div class="route-steps">
+            <div class="step current">
+              <span class="dot"></span>
+              <div class="body">
+                <div class="t">現在地</div>
+                <div class="s">国内線ロビー 3F</div>
+              </div>
+              <div class="meta">
+                0m
+              </div>
+            </div>
+            <div class="step">
+              <span class="dot"></span>
+              <div class="body">
+                <div class="t">保安検査場</div>
+                <div class="s">待ち時間 約 5分</div>
+              </div>
+              <div class="meta">
+                150m
+              </div>
+            </div>
+            <div class="step">
+              <span class="dot"></span>
+              <div class="body">
+                <div class="t">3F コンコース</div>
+                <div class="s">制限エリア入口</div>
+              </div>
+              <div class="meta">
+                300m
+              </div>
+            </div>
+            <div class="step end">
+              <span class="dot"></span>
+              <div class="body">
+                <div class="t">搭乗口 112</div>
+                <div class="s">NH123 ロンドン (LHR) 行</div>
+              </div>
+              <div class="meta">
+                450m
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /nav-body -->
 
       <div class="nav-bottom">
         <a href="route.html" class="nav-btn">
