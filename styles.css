@@ -144,7 +144,7 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
   overflow: hidden;
   background-color: #ffffff;
-  background-image: url('images/asd.png');
+  background-image: url('images/bg.png');
   background-position: top center;
   background-size: 100% auto;
   background-repeat: no-repeat;
