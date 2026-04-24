@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HANEDA — ルート案内</title>
+<title>HANEDA — ルート詳細</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<div class="flow-hint">③ 結果UI(ルート表示)</div>
+<div class="flow-hint">ルート詳細</div>
 <div class="stage">
   <div class="phone">
-    <div class="screen screen-route">
+    <div class="screen screen-details">
       <div class="status-bar">
         <span>9:41</span>
         <div class="status-icons">
@@ -22,98 +22,153 @@
       </div>
 
       <div class="sub-header">
-        <a href="main.html" class="icon-btn" aria-label="back">
+        <a href="route-results.html" class="icon-btn" aria-label="back">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </a>
-        <div class="title">ルート案内</div>
-        <div class="spacer"></div>
+        <div class="title">ルート詳細</div>
+        <button class="icon-btn" aria-label="share">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
       </div>
 
-      <div class="info-card">
-        <div class="info-left">
-          <div class="lb">搭乗までの時間</div>
-          <div class="big">02<span class="u">時間</span>18<span class="u">分</span></div>
-          <div class="sub">搭乗開始 12:30 / 出発 13:00</div>
+      <!-- Summary -->
+      <div class="details-summary">
+        <div class="badges">
+          <span class="badge">最速</span>
+          <span class="badge">乗換1回</span>
         </div>
-        <div class="info-right">
-          <div class="lb">搭乗口</div>
-          <div class="gate">112</div>
+        <div class="arrival-big">
+          到着 <span class="v">10:15</span>
         </div>
-      </div>
-
-      <div class="map-panel">
-        <div class="map-bg"></div>
-        <div class="map-grid"></div>
-        <div class="map-buildings">
-          <div class="bldg bldg1"></div>
-          <div class="bldg bldg2"></div>
-          <div class="bldg bldg3"></div>
-          <div class="bldg bldg4"></div>
-          <div class="bldg bldg5"></div>
-          <div class="bldg bldg6"></div>
-          <div class="bldg bldg7"></div>
-        </div>
-
-        <svg class="route-svg" viewBox="0 0 280 280" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="routeGrad" x1="0" y1="1" x2="1" y2="0">
-              <stop offset="0" stop-color="#3d5cc8"/>
-              <stop offset="1" stop-color="#2844a0"/>
-            </linearGradient>
-          </defs>
-          <path d="M 60 240 L 90 210 L 120 180 L 140 150 L 170 125 L 195 100 L 215 80"
-            stroke="url(#routeGrad)" stroke-width="4" stroke-linecap="round" fill="none"/>
-          <circle cx="60" cy="240" r="6" fill="#2844a0"/>
-          <circle cx="60" cy="240" r="10" fill="#2844a0" fill-opacity="0.25"/>
-        </svg>
-
-        <div class="map-chip checkpoint">
-          <div>保安検査場</div>
-          <div class="s">待ち時間: 約5分</div>
-        </div>
-        <div class="map-chip gate">
-          <div class="n">112</div>
-          <div class="l">搭乗口</div>
-        </div>
-
-        <div class="map-plane">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
-        </div>
-
-        <div class="map-icon i1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-3V6a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg></div>
-        <div class="map-icon i2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="3"/><circle cx="15" cy="7" r="3"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg></div>
-        <div class="map-icon i3"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-
-        <div class="floor-picker">
-          <div class="fl">4F</div>
-          <div class="fl active">3F</div>
-          <div class="fl">2F</div>
-        </div>
-
-        <div class="current-loc">
-          <span class="dot"></span>
-          <span>現在地</span>
+        <div style="font-size: 12px; opacity: 0.9;">09:41 秋葉原発 → 10:15 羽田空港着</div>
+        <div class="trip-meta">
+          <div>
+            <span class="v">34分</span>
+            所要時間
+          </div>
+          <div>
+            <span class="v">1回</span>
+            乗換
+          </div>
+          <div>
+            <span class="v">¥480</span>
+            料金
+          </div>
         </div>
       </div>
 
-      <div class="stats-row">
-        <div class="stat">
-          <span class="l">距離</span>
-          <span class="v">約 450m</span>
+      <!-- Timeline -->
+      <div class="timeline">
+        <!-- 1. Akihabara depart -->
+        <div class="timeline-station">
+          <div class="timeline-time">09:41<span class="small">発</span></div>
+          <div class="timeline-dot-col"><div class="timeline-dot"></div></div>
+          <div class="timeline-name">
+            秋葉原駅
+            <span class="sub">3番線 · 山手線外回り</span>
+          </div>
         </div>
-        <div class="divider-v"></div>
-        <div class="stat">
-          <span class="l">徒歩</span>
-          <span class="v">約 18分 (予測)</span>
+
+        <!-- Segment: JR Yamanote -->
+        <div class="timeline-segment">
+          <div class="timeline-time">17分</div>
+          <div class="timeline-dot-col"></div>
+          <div class="timeline-segment-body">
+            <div class="timeline-segment-line">
+              <span class="line-pill jr">JR山手線</span>
+              <span style="font-size: 11px; color: var(--gray-500);">外回り · 品川方面</span>
+            </div>
+            <div class="timeline-segment-meta">
+              8駅 · <span class="v">17分</span> · ¥210
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Shinagawa transfer -->
+        <div class="timeline-station">
+          <div class="timeline-time">09:58<span class="small">着</span></div>
+          <div class="timeline-dot-col"><div class="timeline-dot"></div></div>
+          <div class="timeline-name">
+            品川駅
+            <span class="sub">乗換 4分 · JR→京急 (2番線)</span>
+          </div>
+        </div>
+
+        <!-- Segment: Keikyu -->
+        <div class="timeline-segment">
+          <div class="timeline-time">13分</div>
+          <div class="timeline-dot-col"></div>
+          <div class="timeline-segment-body">
+            <div class="timeline-segment-line">
+              <span class="line-pill keikyu">京急 エアポート快特</span>
+            </div>
+            <div class="timeline-segment-meta">
+              2駅 · <span class="v">13分</span> · ¥270
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Haneda arrive -->
+        <div class="timeline-station">
+          <div class="timeline-time">10:15<span class="small">着</span></div>
+          <div class="timeline-dot-col"><div class="timeline-dot"></div></div>
+          <div class="timeline-name">
+            羽田空港 第2ターミナル駅
+            <span class="sub">到着出口 → 2F 国内線ロビー</span>
+          </div>
+        </div>
+
+        <!-- Segment: Walk -->
+        <div class="timeline-segment walk">
+          <div class="timeline-time">18分</div>
+          <div class="timeline-dot-col"></div>
+          <div class="timeline-segment-body">
+            <div class="timeline-segment-line">
+              <span class="line-pill walk">徒歩</span>
+              <span style="font-size: 11px; color: var(--gray-500);">保安検査場 経由</span>
+            </div>
+            <div class="timeline-segment-meta">
+              約450m · <span class="v">18分</span> · 保安検査 待ち時間 約5分
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Gate end -->
+        <div class="timeline-station">
+          <div class="timeline-time">10:33<span class="small">着</span></div>
+          <div class="timeline-dot-col"><div class="timeline-dot end"></div></div>
+          <div class="timeline-name">
+            搭乗口 112
+            <span class="sub">NH123 ロンドン (LHR) 行</span>
+          </div>
         </div>
       </div>
 
-      <a href="nav.html" class="btn-start">
-        ルート案内を開始
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
+      <!-- Gate arrival info -->
+      <div class="gate-arrival">
+        <div class="ic">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+        </div>
+        <div class="tx">
+          <div class="t">搭乗ゲート到着予定</div>
+          <div class="b"><span class="gn">112</span>搭乗口</div>
+        </div>
+        <div class="time">
+          <span>搭乗開始</span>
+          <span class="v">12:30</span>
+        </div>
+      </div>
 
-      <a href="#" class="route-link">ルート詳細を確認</a>
+      <!-- Fixed bottom action bar -->
+      <div class="fixed-start">
+        <button class="btn-save" aria-label="保存">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <a href="nav.html" class="btn-start">
+          ルート案内を開始
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
 
       <div class="home-ind"></div>
     </div>

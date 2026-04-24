@@ -43,53 +43,53 @@
         <div class="map-bldg b7"></div>
         <div class="map-bldg b8"></div>
 
-        <!-- Airport reference -->
+        <!-- Area reference: Akihabara -->
         <div class="map-airport">
           <div class="plane-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 4v16"/></svg>
           </div>
-          <div class="plane-label">羽田空港</div>
+          <div class="plane-label">秋葉原エリア</div>
         </div>
 
-        <!-- Selectable departure pins -->
-        <div class="map-pin" style="top: 30%; left: 32%;" data-label="第1ターミナル" data-sub="国内線" data-dist="1.8 km / 徒歩 約 22分">
+        <!-- Selectable departure pins (nearby stations) -->
+        <div class="map-pin" style="top: 30%; left: 32%;" data-label="末広町駅" data-sub="東京メトロ銀座線" data-dist="450m / 徒歩 約 6分">
           <div class="pin-icon">
             <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
               <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
               <circle cx="14" cy="14" r="6" fill="white"/>
             </svg>
           </div>
-          <div class="pin-label">第1</div>
+          <div class="pin-label">末広町</div>
         </div>
 
-        <div class="map-pin active" style="top: 48%; left: 50%;" id="selectedPin" data-label="第2ターミナル" data-sub="東京国際空港 · 国内線" data-dist="現在地 / 徒歩 約 2分">
+        <div class="map-pin active" style="top: 48%; left: 50%;" id="selectedPin" data-label="秋葉原駅" data-sub="JR山手線 · 総武線 · つくばエクスプレス" data-dist="現在地 / 徒歩 約 1分">
           <div class="pin-icon">
             <svg width="34" height="42" viewBox="0 0 28 36" fill="none">
               <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#2844a0"/>
               <circle cx="14" cy="14" r="6" fill="white"/>
             </svg>
           </div>
-          <div class="pin-label">第2</div>
+          <div class="pin-label">秋葉原</div>
         </div>
 
-        <div class="map-pin" style="top: 38%; left: 68%;" data-label="第3ターミナル" data-sub="国際線" data-dist="3.2 km / 徒歩 約 38分">
+        <div class="map-pin" style="top: 38%; left: 68%;" data-label="岩本町駅" data-sub="都営新宿線" data-dist="380m / 徒歩 約 5分">
           <div class="pin-icon">
             <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
               <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
               <circle cx="14" cy="14" r="6" fill="white"/>
             </svg>
           </div>
-          <div class="pin-label">第3</div>
+          <div class="pin-label">岩本町</div>
         </div>
 
-        <div class="map-pin" style="top: 66%; left: 28%;" data-label="駐車場P1" data-sub="羽田空港 駐車場" data-dist="2.4 km / 徒歩 約 28分">
+        <div class="map-pin" style="top: 66%; left: 28%;" data-label="御徒町駅" data-sub="JR山手線 · 京浜東北線" data-dist="620m / 徒歩 約 8分">
           <div class="pin-icon">
             <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
               <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
               <circle cx="14" cy="14" r="6" fill="white"/>
             </svg>
           </div>
-          <div class="pin-label">駐車場</div>
+          <div class="pin-label">御徒町</div>
         </div>
 
         <!-- Current location (pulsing dot) -->
@@ -129,8 +129,8 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
           <div>
-            <div class="title-main" id="selTitle">東京国際空港 第2ターミナル</div>
-            <div class="title-sub" id="selSub">東京国際空港 · 国内線</div>
+            <div class="title-main" id="selTitle">秋葉原駅</div>
+            <div class="title-sub" id="selSub">JR山手線 · 総武線 · つくばエクスプレス</div>
           </div>
         </div>
         <div class="dist">
@@ -139,10 +139,10 @@
 
         <div class="loc-suggest">
           <div class="loc-chip">現在地を使用</div>
-          <div class="loc-chip">第1ターミナル</div>
-          <div class="loc-chip active">第2ターミナル</div>
-          <div class="loc-chip">第3ターミナル</div>
-          <div class="loc-chip">駐車場</div>
+          <div class="loc-chip active">秋葉原駅</div>
+          <div class="loc-chip">末広町駅</div>
+          <div class="loc-chip">岩本町駅</div>
+          <div class="loc-chip">御徒町駅</div>
         </div>
 
         <a href="main.html" class="btn-confirm">
