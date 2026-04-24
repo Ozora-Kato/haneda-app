@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HANEDA — 現在地を選択</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="flow-hint">現在地選択ページ</div>
+<div class="stage">
+  <div class="phone">
+    <div class="screen screen-location">
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 16 11" fill="none"><path d="M1 7c0-.6.4-1 1-1h1c.6 0 1 .4 1 1v3c0 .6-.4 1-1 1H2c-.6 0-1-.4-1-1V7zm5-2c0-.6.4-1 1-1h1c.6 0 1 .4 1 1v5c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V5zm5-3c0-.6.4-1 1-1h1c.6 0 1 .4 1 1v8c0 .6-.4 1-1 1h-1c-.6 0-1-.4-1-1V2z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 16 11" fill="none"><path d="M8 2c2.2 0 4.2.8 5.8 2.2l-1.4 1.4C11.1 4.5 9.6 4 8 4s-3.1.5-4.4 1.6L2.2 4.2C3.8 2.8 5.8 2 8 2zM8 6c1.1 0 2.1.4 2.9 1l-1.4 1.4C9.1 8.1 8.6 8 8 8c-.6 0-1.1.1-1.5.4L5.1 7c.8-.6 1.8-1 2.9-1zm0 3c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 22 11" fill="none"><rect x="1" y="1" width="18" height="9" rx="2" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="16" height="7" rx="1" fill="currentColor"/><rect x="20" y="4" width="1.5" height="3" rx="0.5" fill="currentColor" opacity="0.4"/></svg>
+        </div>
+      </div>
+
+      <div class="map-canvas">
+        <div class="map-water"></div>
+        <div class="map-park p1"></div>
+        <div class="map-park p2"></div>
+
+        <div class="map-road major r1"></div>
+        <div class="map-road major r2"></div>
+        <div class="map-road r3"></div>
+        <div class="map-road r4"></div>
+        <div class="map-road r5"></div>
+        <div class="map-road r6"></div>
+        <div class="map-road r7"></div>
+
+        <div class="map-bldg b1"></div>
+        <div class="map-bldg b2"></div>
+        <div class="map-bldg b3"></div>
+        <div class="map-bldg b4"></div>
+        <div class="map-bldg b5"></div>
+        <div class="map-bldg b6"></div>
+        <div class="map-bldg b7"></div>
+        <div class="map-bldg b8"></div>
+
+        <!-- Airport reference -->
+        <div class="map-airport">
+          <div class="plane-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+          </div>
+          <div class="plane-label">羽田空港</div>
+        </div>
+
+        <!-- Selectable departure pins -->
+        <div class="map-pin" style="top: 30%; left: 32%;" data-label="第1ターミナル" data-sub="国内線" data-dist="1.8 km / 徒歩 約 22分">
+          <div class="pin-icon">
+            <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
+              <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
+              <circle cx="14" cy="14" r="6" fill="white"/>
+            </svg>
+          </div>
+          <div class="pin-label">第1</div>
+        </div>
+
+        <div class="map-pin active" style="top: 48%; left: 50%;" id="selectedPin" data-label="第2ターミナル" data-sub="東京国際空港 · 国内線" data-dist="現在地 / 徒歩 約 2分">
+          <div class="pin-icon">
+            <svg width="34" height="42" viewBox="0 0 28 36" fill="none">
+              <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#2844a0"/>
+              <circle cx="14" cy="14" r="6" fill="white"/>
+            </svg>
+          </div>
+          <div class="pin-label">第2</div>
+        </div>
+
+        <div class="map-pin" style="top: 38%; left: 68%;" data-label="第3ターミナル" data-sub="国際線" data-dist="3.2 km / 徒歩 約 38分">
+          <div class="pin-icon">
+            <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
+              <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
+              <circle cx="14" cy="14" r="6" fill="white"/>
+            </svg>
+          </div>
+          <div class="pin-label">第3</div>
+        </div>
+
+        <div class="map-pin" style="top: 66%; left: 28%;" data-label="駐車場P1" data-sub="羽田空港 駐車場" data-dist="2.4 km / 徒歩 約 28分">
+          <div class="pin-icon">
+            <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
+              <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
+              <circle cx="14" cy="14" r="6" fill="white"/>
+            </svg>
+          </div>
+          <div class="pin-label">駐車場</div>
+        </div>
+
+        <!-- Current location (pulsing dot) -->
+        <div class="current-location-pin" style="top: 48%; left: 50%;">
+          <div class="pulse"></div>
+          <div class="pulse-dot"></div>
+        </div>
+      </div>
+
+      <!-- Search / back overlay -->
+      <div class="loc-search">
+        <a href="main.html" class="back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        <input type="text" placeholder="場所を検索" />
+        <div class="search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+      </div>
+
+      <!-- Zoom controls -->
+      <div class="zoom-controls">
+        <button aria-label="zoom in">+</button>
+        <button aria-label="zoom out">−</button>
+      </div>
+
+      <!-- Locate-me -->
+      <button class="locate-me" aria-label="locate me">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+      </button>
+
+      <!-- Bottom sheet -->
+      <div class="loc-sheet">
+        <div class="lbl">出発地として選択</div>
+        <div class="title-row">
+          <div class="pin-small">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="title-main" id="selTitle">東京国際空港 第2ターミナル</div>
+            <div class="title-sub" id="selSub">東京国際空港 · 国内線</div>
+          </div>
+        </div>
+        <div class="dist">
+          <span>現在地からの距離 <span class="v" id="selDist">0 m</span></span>
+        </div>
+
+        <div class="loc-suggest">
+          <div class="loc-chip">現在地を使用</div>
+          <div class="loc-chip">第1ターミナル</div>
+          <div class="loc-chip active">第2ターミナル</div>
+          <div class="loc-chip">第3ターミナル</div>
+          <div class="loc-chip">駐車場</div>
+        </div>
+
+        <a href="main.html" class="btn-confirm">
+          この場所を出発地に設定
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+
+      <div class="home-ind"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Pin selection: update bottom sheet + active state
+  document.querySelectorAll('.map-pin').forEach(pin => {
+    pin.addEventListener('click', () => {
+      document.querySelectorAll('.map-pin').forEach(p => p.classList.remove('active'));
+      pin.classList.add('active');
+      document.getElementById('selTitle').textContent = pin.dataset.label;
+      document.getElementById('selSub').textContent = pin.dataset.sub;
+      document.getElementById('selDist').textContent = pin.dataset.dist;
+    });
+  });
+
+  // Chip selection
+  document.querySelectorAll('.loc-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

@@ -50,12 +50,14 @@
         </div>
 
         <div class="field">
-          <div class="field-label">出発地</div>
-          <div class="field-input">
-            <div class="lead"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-            <input type="text" placeholder="例) 東京 (羽田) HND" value="東京 (羽田) HND" />
-            <div class="trail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
-          </div>
+          <div class="field-label">現在地</div>
+          <a href="location.html" class="field-input field-select">
+            <div class="lead lead-locate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+            </div>
+            <span class="field-value">東京国際空港 第2ターミナル</span>
+            <div class="trail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </a>
         </div>
 
         <button class="btn-search" type="submit">

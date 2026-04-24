@@ -387,6 +387,24 @@ button { font-family: inherit; cursor: pointer; }
   cursor: pointer;
 }
 
+/* Selectable field (tap to open picker) */
+.field-select {
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.field-select:hover {
+  border-color: var(--navy-700);
+  background: var(--white);
+}
+.field-select .field-value {
+  flex: 1;
+  font-size: 14px;
+  color: var(--gray-900);
+  font-weight: 500;
+}
+.field-select .lead-locate { color: var(--navy-700); }
+
 .btn-search {
   width: 100%;
   height: 54px;
@@ -867,6 +885,382 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--white);
   width: 46px; height: 46px;
 }
+
+/* =========================================
+   Screen: Location Picker
+   ========================================= */
+.screen-location {
+  background: #e8eef3;
+  overflow: hidden;
+}
+
+/* Map canvas (Google Maps-like) */
+.map-canvas {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 50%, #f4f7fb 0%, #e5ecf3 60%, #d8e0ea 100%);
+  overflow: hidden;
+}
+
+/* Large blue water region (Tokyo Bay style) */
+.map-water {
+  position: absolute;
+  right: -10%;
+  bottom: -10%;
+  width: 90%;
+  height: 85%;
+  background: linear-gradient(135deg, #c5dcee 0%, #aac9e0 100%);
+  border-radius: 40% 20% 30% 50%;
+  opacity: 0.9;
+}
+.map-water::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(150, 185, 215, 0.3));
+  border-radius: inherit;
+}
+
+/* Land parks (light green) */
+.map-park {
+  position: absolute;
+  background: #d4e4c8;
+  opacity: 0.85;
+  border-radius: 40% 30% 35% 40%;
+}
+.map-park.p1 { top: 12%; left: 8%; width: 90px; height: 70px; }
+.map-park.p2 { top: 58%; left: 4%; width: 60px; height: 55px; border-radius: 30% 50% 40% 35%; }
+
+/* Roads — using pseudo-elements and absolute positioned strips */
+.map-road {
+  position: absolute;
+  background: var(--white);
+  box-shadow: 0 0 0 1px #d0d8e0;
+}
+.map-road.major { background: #ffe4a0; box-shadow: 0 0 0 1px #e0c070; }
+.map-road.r1 { top: 22%; left: -5%; width: 80%; height: 5px; transform: rotate(8deg); }
+.map-road.r2 { top: 42%; left: -5%; width: 75%; height: 7px; transform: rotate(-5deg); }
+.map-road.r3 { top: 65%; left: -5%; width: 70%; height: 5px; transform: rotate(4deg); }
+.map-road.r4 { top: 10%; left: 25%; width: 4px; height: 85%; transform: rotate(8deg); }
+.map-road.r5 { top: 10%; left: 55%; width: 3px; height: 80%; transform: rotate(-3deg); }
+.map-road.r6 { top: 30%; left: 15%; width: 50%; height: 3px; transform: rotate(-15deg); }
+.map-road.r7 { top: 52%; left: 20%; width: 45%; height: 3px; transform: rotate(10deg); }
+
+/* Building blocks (subtle gray rectangles) */
+.map-bldg {
+  position: absolute;
+  background: #eef2f7;
+  border: 1px solid #d8dde6;
+  border-radius: 2px;
+}
+.map-bldg.b1 { top: 16%; left: 30%; width: 16px; height: 20px; }
+.map-bldg.b2 { top: 26%; left: 40%; width: 22px; height: 16px; }
+.map-bldg.b3 { top: 36%; left: 32%; width: 18px; height: 22px; }
+.map-bldg.b4 { top: 48%; left: 44%; width: 20px; height: 18px; }
+.map-bldg.b5 { top: 58%; left: 36%; width: 16px; height: 16px; }
+.map-bldg.b6 { top: 72%; left: 26%; width: 24px; height: 20px; }
+.map-bldg.b7 { top: 18%; left: 58%; width: 18px; height: 20px; }
+.map-bldg.b8 { top: 30%; left: 62%; width: 16px; height: 18px; }
+
+/* Airport icon on map (large, visible) */
+.map-airport {
+  position: absolute;
+  top: 52%;
+  left: 38%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  z-index: 4;
+}
+.map-airport .plane-icon {
+  width: 38px; height: 38px;
+  background: var(--white);
+  border: 2px solid var(--navy-700);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-700);
+  box-shadow: 0 4px 12px rgba(13, 27, 75, 0.15);
+}
+.map-airport .plane-label {
+  background: var(--white);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--gray-900);
+  box-shadow: 0 2px 6px rgba(13, 27, 75, 0.12);
+  white-space: nowrap;
+}
+
+/* Current location pin (pulsing) */
+.current-location-pin {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  pointer-events: none;
+}
+.pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(40, 68, 160, 0.3);
+  animation: mapPulse 2s ease-out infinite;
+}
+.pulse-dot {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #3d6fe5;
+  border: 3px solid var(--white);
+  box-shadow: 0 2px 6px rgba(40, 68, 160, 0.5);
+  z-index: 2;
+}
+@keyframes mapPulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(3.5); opacity: 0; }
+}
+
+/* Selectable departure pins */
+.map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 4;
+  cursor: pointer;
+  transition: transform .15s ease;
+}
+.map-pin:hover { transform: translate(-50%, -100%) scale(1.08); }
+.map-pin.active { z-index: 6; }
+.map-pin .pin-icon {
+  width: 32px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.map-pin .pin-icon svg { filter: drop-shadow(0 3px 5px rgba(13, 27, 75, 0.3)); }
+.map-pin.active .pin-icon {
+  transform: scale(1.15);
+}
+.map-pin .pin-label {
+  position: absolute;
+  top: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--white);
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--gray-900);
+  box-shadow: 0 2px 6px rgba(13, 27, 75, 0.12);
+  white-space: nowrap;
+}
+
+/* Search bar overlay */
+.loc-search {
+  position: absolute;
+  top: 60px;
+  left: 16px;
+  right: 16px;
+  background: var(--white);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 20px -6px rgba(13, 27, 75, 0.2);
+  z-index: 15;
+}
+.loc-search .back {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-900);
+}
+.loc-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--gray-900);
+  background: none;
+}
+.loc-search input::placeholder { color: var(--gray-400); }
+.loc-search .search-icon { color: var(--gray-400); }
+
+/* Locate-me button (floating) */
+.locate-me {
+  position: absolute;
+  right: 16px;
+  bottom: 280px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-700);
+  box-shadow: 0 4px 14px rgba(13, 27, 75, 0.18);
+  z-index: 12;
+  cursor: pointer;
+  border: none;
+  transition: transform .15s ease;
+}
+.locate-me:hover { transform: scale(1.05); }
+
+/* Zoom controls */
+.zoom-controls {
+  position: absolute;
+  right: 16px;
+  bottom: 336px;
+  background: var(--white);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 14px rgba(13, 27, 75, 0.15);
+  z-index: 12;
+  overflow: hidden;
+}
+.zoom-controls button {
+  width: 40px; height: 40px;
+  background: none;
+  border: none;
+  color: var(--gray-900);
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.zoom-controls button + button { border-top: 1px solid var(--gray-200); }
+.zoom-controls button:hover { background: var(--gray-100); }
+
+/* Bottom sheet: selected location */
+.loc-sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  padding: 14px 22px 22px;
+  box-shadow: 0 -8px 30px -12px rgba(13, 27, 75, 0.25);
+  z-index: 20;
+}
+.loc-sheet::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  background: var(--gray-300);
+  border-radius: 2px;
+  margin: 0 auto 14px;
+}
+.loc-sheet .lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+.loc-sheet .title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.loc-sheet .pin-small {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--blue-50);
+  color: var(--navy-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.loc-sheet .title-main {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: -0.01em;
+}
+.loc-sheet .title-sub {
+  font-size: 11.5px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+.loc-sheet .dist {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin: 10px 0 14px;
+  display: flex;
+  gap: 14px;
+}
+.loc-sheet .dist .v { color: var(--gray-900); font-weight: 600; }
+
+.loc-suggest {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.loc-suggest::-webkit-scrollbar { display: none; }
+.loc-chip {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 18px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s ease;
+}
+.loc-chip:hover { border-color: var(--navy-700); color: var(--navy-700); }
+.loc-chip.active {
+  background: var(--navy-700);
+  border-color: var(--navy-700);
+  color: var(--white);
+}
+
+.btn-confirm {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(135deg, #2844a0 0%, #3d5cc8 100%);
+  color: var(--white);
+  border: none;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 18px -8px rgba(40, 68, 160, 0.5);
+  transition: transform .15s ease;
+  text-decoration: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-confirm:hover { transform: translateY(-1px); }
 
 /* Flow hint (small non-intrusive label on desktop) */
 .flow-hint {
