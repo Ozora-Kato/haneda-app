@@ -72,6 +72,24 @@
           </button>
         </div>
 
+        <div class="field">
+          <div class="field-label">条件</div>
+          <div class="cond-row">
+            <button type="button" class="cond-cell" id="condSpeed">
+              <span class="cond-ic" id="condSpeedIcon"></span>
+              <span class="cond-tx" id="condSpeedText"></span>
+            </button>
+            <button type="button" class="cond-cell" id="condTaxi">
+              <span class="cond-ic" id="condTaxiIcon"></span>
+              <span class="cond-tx" id="condTaxiText"></span>
+            </button>
+            <button type="button" class="cond-cell" id="condBus">
+              <span class="cond-ic" id="condBusIcon"></span>
+              <span class="cond-tx" id="condBusText"></span>
+            </button>
+          </div>
+        </div>
+
         <button class="btn-search" type="submit">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           検索する
@@ -151,6 +169,60 @@
 
           <div class="dt-footer">
             <button type="button" class="dt-done" id="dtDone">完了</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Speed picker modal (drum-roll) -->
+      <div class="dt-modal" id="speedModal" aria-hidden="true">
+        <div class="dt-backdrop" data-dismiss="speedModal"></div>
+        <div class="dt-sheet" role="dialog" aria-modal="true">
+          <div class="dt-handle"></div>
+          <div class="dt-header">
+            <button type="button" class="dt-cancel" data-dismiss="speedModal">キャンセル</button>
+            <h3>歩く速度</h3>
+            <span class="dt-spacer"></span>
+          </div>
+          <div class="dt-picker single">
+            <div class="dt-wheel" id="wheelSpeed"></div>
+            <div class="dt-indicator" aria-hidden="true"></div>
+          </div>
+          <div class="dt-footer">
+            <button type="button" class="dt-done" id="speedDone">完了</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taxi modal (option list) -->
+      <div class="dt-modal" id="taxiModal" aria-hidden="true">
+        <div class="dt-backdrop" data-dismiss="taxiModal"></div>
+        <div class="dt-sheet" role="dialog" aria-modal="true">
+          <div class="dt-handle"></div>
+          <div class="dt-header">
+            <button type="button" class="dt-cancel" data-dismiss="taxiModal">キャンセル</button>
+            <h3>タクシー利用</h3>
+            <span class="dt-spacer"></span>
+          </div>
+          <ul class="opt-list" id="taxiList"></ul>
+          <div class="dt-footer">
+            <button type="button" class="dt-done" id="taxiDone">完了</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bus modal (option list) -->
+      <div class="dt-modal" id="busModal" aria-hidden="true">
+        <div class="dt-backdrop" data-dismiss="busModal"></div>
+        <div class="dt-sheet" role="dialog" aria-modal="true">
+          <div class="dt-handle"></div>
+          <div class="dt-header">
+            <button type="button" class="dt-cancel" data-dismiss="busModal">キャンセル</button>
+            <h3>バス利用</h3>
+            <span class="dt-spacer"></span>
+          </div>
+          <ul class="opt-list" id="busList"></ul>
+          <div class="dt-footer">
+            <button type="button" class="dt-done" id="busDone">完了</button>
           </div>
         </div>
       </div>
@@ -328,6 +400,151 @@
     locEl.textContent = '現在地を選択する';
     locEl.classList.add('is-placeholder');
   }
+
+  // ============================================
+  // Conditions: speed / taxi / bus
+  // ============================================
+  const ICONS = {
+    // speed
+    speedFast: '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>',
+    speedSlightlyFast: '<svg viewBox="0 0 24 24"><polygon points="13 19 22 12 13 5 13 19" fill="currentColor"/><polygon points="2 19 11 12 2 5 2 19" fill="currentColor"/></svg>',
+    speedSlightlySlow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+    speedSlow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    // taxi
+    taxiDefault: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg>',
+    taxiOnly: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/></svg>',
+    taxiNo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63"/><circle cx="6.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/><line x1="3" y1="3" x2="21" y2="21"/></svg>',
+    // bus
+    busDefault: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg>',
+    busNo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6v5"/><path d="M15 6v5"/><path d="M2 12h19"/><path d="M18 18h3v-3l-1.4-5C19 7.8 18 7 17 7H5a2 2 0 0 0-2 2v9h3"/><circle cx="7" cy="18" r="1.5"/><circle cx="17" cy="18" r="1.5"/><line x1="3" y1="3" x2="21" y2="21"/></svg>',
+  };
+
+  const speedOpts = [
+    { full: '急いで',       short: '急いで',       icon: 'speedFast' },
+    { full: '少し急いで',   short: '少し急ぎ',     icon: 'speedSlightlyFast' },
+    { full: '少しゆっくり', short: '少しゆっくり', icon: 'speedSlightlySlow' },
+    { full: 'ゆっくり',     short: 'ゆっくり',     icon: 'speedSlow' },
+  ];
+  const taxiOpts = [
+    { full: '指定なし',             short: '指定なし',     icon: 'taxiDefault' },
+    { full: 'タクシーを利用しない', short: '利用しない',   icon: 'taxiNo' },
+    { full: 'タクシーのみで移動',   short: 'タクシーのみ', icon: 'taxiOnly' },
+  ];
+  const busOpts = [
+    { full: '指定なし',         short: '指定なし',   icon: 'busDefault' },
+    { full: 'バスを利用しない', short: '利用しない', icon: 'busNo' },
+  ];
+
+  const condState = { speed: 1, taxi: 0, bus: 0 };
+  let pending = { taxi: 0, bus: 0 };
+
+  function setCellContent(idIcon, idText, opts, idx) {
+    document.getElementById(idIcon).innerHTML = ICONS[opts[idx].icon];
+    document.getElementById(idText).textContent = opts[idx].short;
+  }
+  function renderCond() {
+    setCellContent('condSpeedIcon', 'condSpeedText', speedOpts, condState.speed);
+    setCellContent('condTaxiIcon',  'condTaxiText',  taxiOpts,  condState.taxi);
+    setCellContent('condBusIcon',   'condBusText',   busOpts,   condState.bus);
+
+    const speedCell = document.getElementById('condSpeed');
+    const busCell   = document.getElementById('condBus');
+    const taxiOnly = (condState.taxi === 2);
+
+    speedCell.classList.toggle('disabled', taxiOnly);
+    busCell.classList.toggle('disabled',   taxiOnly);
+    busCell.classList.toggle('soft', !taxiOnly && condState.bus === 1);
+  }
+
+  // ---- Generic sheet open/close (used by speed/taxi/bus modals) ----
+  function openSheet(id) {
+    const m = document.getElementById(id);
+    m.classList.add('open');
+    m.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }
+  function closeSheet(id) {
+    const m = document.getElementById(id);
+    m.classList.remove('open');
+    m.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+  document.querySelectorAll('[data-dismiss]').forEach((el) => {
+    el.addEventListener('click', () => closeSheet(el.dataset.dismiss));
+  });
+
+  // ---- Speed modal (drum-roll) ----
+  const wheelSpeed = document.getElementById('wheelSpeed');
+  buildWheel(wheelSpeed, speedOpts, (o) => o.full);
+  let speedTimer;
+  wheelSpeed.addEventListener('scroll', () => {
+    clearTimeout(speedTimer);
+    speedTimer = setTimeout(() => updateAria(wheelSpeed), 60);
+  });
+  document.getElementById('condSpeed').addEventListener('click', () => {
+    if (document.getElementById('condSpeed').classList.contains('disabled')) return;
+    openSheet('speedModal');
+    requestAnimationFrame(() => snapTo(wheelSpeed, condState.speed));
+  });
+  document.getElementById('speedDone').addEventListener('click', () => {
+    condState.speed = selectedIndex(wheelSpeed);
+    renderCond();
+    closeSheet('speedModal');
+  });
+
+  // ---- Taxi / Bus option list modals ----
+  function buildOptList(listEl, opts, currentIdx, onPick) {
+    listEl.innerHTML = '';
+    opts.forEach((opt, i) => {
+      const li = document.createElement('li');
+      li.className = 'opt-item' + (i === currentIdx ? ' selected' : '');
+      li.dataset.index = i;
+      li.innerHTML = `
+        <span class="opt-label">${opt.full}</span>
+        <svg class="opt-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      `;
+      li.addEventListener('click', () => {
+        listEl.querySelectorAll('.opt-item').forEach((x) => x.classList.remove('selected'));
+        li.classList.add('selected');
+        onPick(i);
+      });
+      listEl.appendChild(li);
+    });
+  }
+
+  document.getElementById('condTaxi').addEventListener('click', () => {
+    pending.taxi = condState.taxi;
+    buildOptList(document.getElementById('taxiList'), taxiOpts, condState.taxi, (i) => { pending.taxi = i; });
+    openSheet('taxiModal');
+  });
+  document.getElementById('taxiDone').addEventListener('click', () => {
+    condState.taxi = pending.taxi;
+    renderCond();
+    closeSheet('taxiModal');
+  });
+
+  document.getElementById('condBus').addEventListener('click', () => {
+    if (document.getElementById('condBus').classList.contains('disabled')) return;
+    pending.bus = condState.bus;
+    buildOptList(document.getElementById('busList'), busOpts, condState.bus, (i) => { pending.bus = i; });
+    openSheet('busModal');
+  });
+  document.getElementById('busDone').addEventListener('click', () => {
+    condState.bus = pending.bus;
+    renderCond();
+    closeSheet('busModal');
+  });
+
+  // Esc closes any open sheet
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    ['speedModal', 'taxiModal', 'busModal'].forEach((id) => {
+      const m = document.getElementById(id);
+      if (m && m.classList.contains('open')) closeSheet(id);
+    });
+  });
+
+  renderCond();
 })();
 </script>
 </body>
