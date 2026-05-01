@@ -32,7 +32,7 @@
     overflow: hidden;
   }
   @media (max-width: 480px) {
-    .loc-topnav { bottom: max(20px, calc(env(safe-area-inset-bottom) + 16px)); }
+    .loc-topnav { bottom: calc(env(safe-area-inset-bottom, 0px) + 32px); }
   }
 
   /* Floating back button (top-left) */

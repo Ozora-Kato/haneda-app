@@ -3130,7 +3130,8 @@ body.modal-open { overflow: hidden; }
   }
   body {
     background: var(--white);
-    height: 100%;
+    height: 100vh;       /* fallback */
+    height: 100dvh;      /* shrinks with iOS Safari URL bar so bottom-fixed UI stays visible */
     overflow: hidden;
     overscroll-behavior: none;
   }
@@ -3165,7 +3166,9 @@ body.modal-open { overflow: hidden; }
   .screen-route,
   .screen-results,
   .screen-details,
-  .screen-nav {
+  .screen-nav,
+  .screen-flights,
+  .screen-location {
     padding-top: env(safe-area-inset-top, 0px);
   }
   .loc-search {
@@ -3178,34 +3181,34 @@ body.modal-open { overflow: hidden; }
     top: calc(24px + env(safe-area-inset-top, 0px));
   }
 
-  /* Bottom safe-area for fixed bars */
+  /* Bottom safe-area for fixed bars — bumped to clear iOS Safari URL bar */
   .bottom-nav {
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   }
   .nav-bottom {
-    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
   }
   .fixed-start {
-    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
   }
   .loc-sheet {
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   }
   .login-actions {
-    bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   }
 
   /* Scrollable bodies need extra bottom padding for grown fixed bars */
   .details-body {
-    padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(130px + env(safe-area-inset-bottom, 0px));
   }
   .nav-body {
-    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
   }
   .main-body {
-    padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(130px + env(safe-area-inset-bottom, 0px));
   }
   .flights-body {
-    padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(130px + env(safe-area-inset-bottom, 0px));
   }
 }
