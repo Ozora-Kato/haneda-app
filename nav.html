@@ -128,16 +128,16 @@
             </svg>
           </div>
           <div class="dir-text">
-            <div class="sub">秋葉原駅 3番線へ</div>
-            <div class="main"><span>120</span>m 直進</div>
+            <div class="sub" id="dirSub">秋葉原駅 3番線へ</div>
+            <div class="main" id="dirMain">120m 直進</div>
           </div>
           <div class="dir-next">
             <div class="label">次</div>
-            <div class="val">
+            <div class="val" id="dirNext">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h12l-4 -4"/><path d="M16 11l-4 4"/><path d="M4 4v14"/></svg>
               乗車
             </div>
-            <div class="dist">山手線 09:41発</div>
+            <div class="dist" id="dirDist">山手線 09:41発</div>
           </div>
         </div>
 
@@ -145,58 +145,27 @@
         <div class="nav-route-info">
           <div class="route-summary">
             <div class="left">
-              <span class="main">あと 52分</span>
-              <span class="sub">19.4km · 搭乗口 112 · 10:33 到着予定</span>
+              <span class="main" id="sumMain">あと 52分</span>
+              <span class="sub" id="sumSub">19.4km · 搭乗口 112 · 10:33 到着予定</span>
             </div>
             <div class="right">
-              <div>進捗 5%</div>
-              <div class="progress-track"><div class="fill" style="width: 5%;"></div></div>
+              <div id="progText">進捗 5%</div>
+              <div class="progress-track"><div class="fill" id="progFill" style="width: 5%;"></div></div>
             </div>
           </div>
 
           <div class="route-steps-label">秋葉原駅 → 搭乗口 112</div>
-          <div class="route-steps">
-            <div class="step current">
-              <span class="dot"></span>
-              <div class="body">
-                <div class="t">秋葉原駅</div>
-                <div class="s">現在地 · JR山手線 3番線 09:41発</div>
-              </div>
-              <div class="meta">
-                0km
-              </div>
-            </div>
-            <div class="step">
-              <span class="dot"></span>
-              <div class="body">
-                <div class="t">品川駅</div>
-                <div class="s">09:58着 · 乗換4分 · 京急2番線</div>
-              </div>
-              <div class="meta">
-                15km
-              </div>
-            </div>
-            <div class="step">
-              <span class="dot"></span>
-              <div class="body">
-                <div class="t">羽田空港 第2ターミナル駅</div>
-                <div class="s">10:15着 · 京急エアポート快特</div>
-              </div>
-              <div class="meta">
-                19km
-              </div>
-            </div>
-            <div class="step end">
-              <span class="dot"></span>
-              <div class="body">
-                <div class="t">搭乗口 112</div>
-                <div class="s">NH123 ロンドン (LHR) 行 · 徒歩18分</div>
-              </div>
-              <div class="meta">
-                19.4km
-              </div>
-            </div>
-          </div>
+          <div class="route-steps" id="stepsList"></div>
+        </div>
+
+        <!-- Step advance CTA -->
+        <div class="step-cta-wrap">
+          <button class="step-cta-btn" id="stepCta" type="button">
+            <span id="ctaLabel">秋葉原駅に到着</span>
+            <span class="ic">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+          </button>
         </div>
 
       </div><!-- /nav-body -->
@@ -226,5 +195,137 @@
     </div>
   </div>
 </div>
+
+<script>
+(() => {
+  // ---- Route legs (each one ends with the user tapping the CTA) ----
+  const steps = [
+    {
+      name: '秋葉原駅へ向かう',
+      sub: 'JR山手線 3番線まで徒歩',
+      meta: '0km',
+      direction: { sub: '秋葉原駅 3番線へ', main: '120m 直進', next: '乗車', dist: '山手線 09:41発' },
+      summary: { main: 'あと 52分', sub: '19.4km · 搭乗口 112 · 10:33 到着予定' },
+      cta: '秋葉原駅に到着',
+      progress: 5,
+    },
+    {
+      name: 'JR山手線に乗車',
+      sub: '秋葉原 → 品川 (8駅 17分)',
+      meta: '15km',
+      direction: { sub: 'JR山手線 品川行き', main: '8駅 / 17分', next: '乗換', dist: '品川駅 09:58着' },
+      summary: { main: 'あと 35分', sub: '15km · 8駅 · 山手線 乗車中' },
+      cta: '品川駅に到着',
+      progress: 30,
+    },
+    {
+      name: '京急線へ乗換',
+      sub: '品川駅 京急2番線へ徒歩 4分',
+      meta: '15km',
+      direction: { sub: '京急2番線へ', main: '徒歩 約 4分', next: '乗車', dist: '京急 10:02発' },
+      summary: { main: 'あと 30分', sub: '京急2番線へ徒歩 4分' },
+      cta: '京急に乗車',
+      progress: 50,
+    },
+    {
+      name: '京急エアポート快特',
+      sub: '品川 → 羽田空港 第2T (13分)',
+      meta: '19km',
+      direction: { sub: 'エアポート快特 羽田行き', main: '2駅 / 13分', next: '降車', dist: '羽田空港 10:15着' },
+      summary: { main: 'あと 17分', sub: '4km · 京急エアポート快特 乗車中' },
+      cta: '羽田空港駅に到着',
+      progress: 75,
+    },
+    {
+      name: '搭乗口112へ徒歩',
+      sub: '保安検査場 経由 18分',
+      meta: '19.4km',
+      direction: { sub: '搭乗口 112 へ', main: '450m 徒歩 約18分', next: '搭乗', dist: 'NH123 12:30搭乗' },
+      summary: { main: 'あと 18分', sub: '450m · 保安検査場 経由 徒歩' },
+      cta: '搭乗口に到着',
+      progress: 95,
+    },
+    {
+      name: '搭乗口 112',
+      sub: 'NH123 ロンドン (LHR) 行',
+      meta: '完了',
+      direction: { sub: 'NH123 ロンドン (LHR)', main: 'ナビ完了', next: '搭乗', dist: '12:30搭乗開始' },
+      summary: { main: '到着しました', sub: '搭乗開始 12:30 · NH123' },
+      cta: null,
+      progress: 100,
+    },
+  ];
+
+  let currentIdx = 0;
+
+  const stepsListEl = document.getElementById('stepsList');
+  const dirSubEl  = document.getElementById('dirSub');
+  const dirMainEl = document.getElementById('dirMain');
+  const dirNextEl = document.getElementById('dirNext');
+  const dirDistEl = document.getElementById('dirDist');
+  const sumMainEl = document.getElementById('sumMain');
+  const sumSubEl  = document.getElementById('sumSub');
+  const progFillEl = document.getElementById('progFill');
+  const progTextEl = document.getElementById('progText');
+  const ctaBtnEl   = document.getElementById('stepCta');
+  const ctaLabelEl = document.getElementById('ctaLabel');
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function renderSteps() {
+    stepsListEl.innerHTML = steps.map((s, i) => {
+      const cls = ['step'];
+      if (i === currentIdx) cls.push('current');
+      else if (i < currentIdx) cls.push('done');
+      if (i === steps.length - 1) cls.push('end');
+      return `
+        <div class="${cls.join(' ')}" data-i="${i}">
+          <span class="dot"></span>
+          <div class="body">
+            <div class="t">${escapeHtml(s.name)}</div>
+            <div class="s">${escapeHtml(s.sub)}</div>
+          </div>
+          <div class="meta">${escapeHtml(s.meta)}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function render() {
+    const s = steps[currentIdx];
+    dirSubEl.textContent  = s.direction.sub;
+    dirMainEl.textContent = s.direction.main;
+    dirNextEl.lastChild.textContent = ' ' + s.direction.next;
+    dirDistEl.textContent = s.direction.dist;
+    sumMainEl.textContent = s.summary.main;
+    sumSubEl.textContent  = s.summary.sub;
+    progFillEl.style.width = s.progress + '%';
+    progTextEl.textContent = '進捗 ' + s.progress + '%';
+
+    if (s.cta) {
+      ctaLabelEl.textContent = s.cta;
+      ctaBtnEl.disabled = false;
+    } else {
+      ctaLabelEl.textContent = 'ナビ完了';
+      ctaBtnEl.disabled = true;
+    }
+
+    renderSteps();
+  }
+
+  ctaBtnEl.addEventListener('click', () => {
+    if (currentIdx < steps.length - 1) {
+      currentIdx++;
+      render();
+      // scroll the now-current step into view
+      const el = stepsListEl.querySelector(`[data-i="${currentIdx}"]`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+
+  render();
+})();
+</script>
 </body>
 </html>
