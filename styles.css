@@ -362,6 +362,8 @@ button { font-family: inherit; cursor: pointer; }
   margin-bottom: 8px;
 }
 .field-input {
+  width: 100%;
+  box-sizing: border-box;
   height: 48px;
   background: var(--gray-100);
   border: 1px solid var(--gray-200);
@@ -371,6 +373,16 @@ button { font-family: inherit; cursor: pointer; }
   padding: 0 14px;
   gap: 10px;
   transition: border-color .15s ease, background .15s ease;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--gray-900);
+  text-align: left;
+  -webkit-appearance: none;
+  appearance: none;
+}
+button.field-input,
+a.field-input {
+  text-decoration: none;
 }
 .field-input:focus-within {
   border-color: var(--navy-700);
