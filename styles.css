@@ -2321,6 +2321,28 @@ body.modal-open { overflow: hidden; }
   font-weight: 400;
 }
 
+/* Inline validation error */
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #d23a47;
+  letter-spacing: 0.01em;
+}
+.field-error[hidden] { display: none; }
+.field-error .err-ic {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.field.has-error .field-input {
+  border-color: #d23a47;
+  background: #fff5f5;
+}
+
 /* Trail as a clickable button (e.g., flight clear) */
 .trail-btn {
   background: none;
