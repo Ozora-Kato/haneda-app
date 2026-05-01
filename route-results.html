@@ -38,6 +38,32 @@
     margin-right: 4px;
   }
   .filter-chip .cic svg { width: 14px; height: 14px; }
+
+  /* Bigger route times (replaces the top-right arrival block) */
+  .route-times {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .route-times .dep,
+  .route-times .arr {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1c1f2a;
+    letter-spacing: -0.01em;
+  }
+  .route-times .arrow {
+    font-size: 18px;
+    font-weight: 600;
+    color: #9ca0aa;
+  }
+  .route-times .duration {
+    font-size: 14px;
+    font-weight: 700;
+    color: #3957C0;
+    margin-left: 4px;
+  }
 </style>
 </head>
 <body>
@@ -133,10 +159,6 @@
           <a href="route.html?r=fast" class="route-card" data-uses="train" data-walk="18">
             <div class="route-card-top">
               <span class="route-badge fast">最速</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:15</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:41</span>
@@ -165,10 +187,6 @@
           <a href="route.html?r=fast2" class="route-card" data-uses="train,monorail,walk" data-walk="15">
             <div class="route-card-top">
               <span class="route-badge normal">標準</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:28</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:48</span>
@@ -199,10 +217,6 @@
           <a href="route.html?r=fast3" class="route-card" data-uses="bus" data-walk="10">
             <div class="route-card-top">
               <span class="route-badge normal">標準</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:35</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:45</span>
@@ -229,10 +243,6 @@
           <a href="route.html?r=taxi" class="route-card" data-uses="taxi" data-walk="6">
             <div class="route-card-top">
               <span class="route-badge fast">タクシー</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:22</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:50</span>
@@ -262,10 +272,6 @@
           <a href="route.html?r=easy" class="route-card" data-uses="bus" data-walk="10">
             <div class="route-card-top">
               <span class="route-badge easy">乗換0</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:35</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:45</span>
@@ -292,10 +298,6 @@
           <a href="route.html?r=fast" class="route-card" data-uses="train" data-walk="18">
             <div class="route-card-top">
               <span class="route-badge easy">乗換1</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:15</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:41</span>
@@ -324,10 +326,6 @@
           <a href="route.html?r=fast2" class="route-card" data-uses="train,monorail,walk" data-walk="15">
             <div class="route-card-top">
               <span class="route-badge normal">乗換2</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:28</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:48</span>
@@ -361,10 +359,6 @@
           <a href="route.html?r=fast" class="route-card" data-uses="train" data-walk="18">
             <div class="route-card-top">
               <span class="route-badge cheap">最安</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:15</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:41</span>
@@ -393,10 +387,6 @@
           <a href="route.html?r=fast2" class="route-card" data-uses="train,monorail,walk" data-walk="15">
             <div class="route-card-top">
               <span class="route-badge normal">¥510</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:28</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:48</span>
@@ -427,10 +417,6 @@
           <a href="route.html?r=easy" class="route-card" data-uses="bus" data-walk="10">
             <div class="route-card-top">
               <span class="route-badge normal">¥1,200</span>
-              <div class="arrive-time">
-                <div class="lb">到着</div>
-                <div class="v">10:35</div>
-              </div>
             </div>
             <div class="route-times">
               <span class="dep">09:45</span>
