@@ -937,11 +937,20 @@ a.field-input {
   margin: 0 16px;
   background: var(--white);
   border-radius: 16px;
-  padding: 14px 16px;
+  padding: 14px 16px 0;
   flex: 1 1 0;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 4px 14px -8px rgba(13, 27, 75, 0.1);
+}
+.route-steps-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0 -16px;
+  padding: 0 16px 14px;
 }
 .route-summary {
   display: flex;
@@ -1060,9 +1069,28 @@ a.field-input {
 /* Step advance CTA (between route-info and nav-bottom) */
 .step-cta-wrap {
   margin: 12px 16px 0;
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
 }
+.step-back-btn {
+  flex: 0 0 54px;
+  height: 54px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--gray-700);
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s ease, opacity .15s ease;
+}
+.step-back-btn:active { background: var(--gray-100); }
+.step-back-btn[disabled] { opacity: 0.35; cursor: not-allowed; }
 .step-cta-btn {
-  width: 100%;
+  flex: 1;
   height: 54px;
   background: var(--navy-700);
   color: #fff;
@@ -1086,6 +1114,28 @@ a.field-input {
   cursor: not-allowed;
 }
 .step-cta-btn .ic { display: flex; align-items: center; }
+
+/* Time row inside each step in the route list */
+.step .body .time {
+  font-size: 10.5px;
+  color: var(--navy-700);
+  font-weight: 600;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: 0.01em;
+}
+.step .body .time svg { width: 11px; height: 11px; flex-shrink: 0; }
+.step .body .time .train {
+  margin-left: 4px;
+  padding-left: 6px;
+  border-left: 1px solid var(--gray-300);
+  color: var(--gray-700);
+  font-weight: 500;
+}
+.step.done .body .time { color: var(--gray-400); }
+.step.done .body .time .train { color: var(--gray-400); border-left-color: var(--gray-200); }
 
 .nav-arrow-card {
   margin: 14px 22px 0;
