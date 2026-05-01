@@ -8,11 +8,21 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <link rel="stylesheet" href="styles.css" />
 <style>
+  /* Confine Leaflet's internal z-indices so they don't cover overlays */
+  .screen-location .map-canvas { isolation: isolate; z-index: 0; }
   #map { position: absolute; inset: 0; width: 100%; height: 100%; background: #eef2f6; }
   .haneda-pin { background: transparent; border: none; }
   .haneda-pin svg { display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.28)); }
   .leaflet-container { font-family: inherit; }
   .leaflet-control-attribution { font-size: 9px; opacity: 0.75; }
+
+  /* Force overlays above the map */
+  .screen-location .status-bar { z-index: 30; }
+  .screen-location .loc-search { z-index: 20; }
+  .screen-location .zoom-controls { z-index: 20; }
+  .screen-location .locate-me { z-index: 20; }
+  .screen-location .loc-sheet { z-index: 25; }
+  .screen-location .home-ind { z-index: 30; }
 </style>
 </head>
 <body>
