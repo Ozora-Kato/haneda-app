@@ -22,81 +22,12 @@
       </div>
 
       <div class="map-canvas">
-        <div class="map-water"></div>
-        <div class="map-park p1"></div>
-        <div class="map-park p2"></div>
-
-        <div class="map-road major r1"></div>
-        <div class="map-road major r2"></div>
-        <div class="map-road r3"></div>
-        <div class="map-road r4"></div>
-        <div class="map-road r5"></div>
-        <div class="map-road r6"></div>
-        <div class="map-road r7"></div>
-
-        <div class="map-bldg b1"></div>
-        <div class="map-bldg b2"></div>
-        <div class="map-bldg b3"></div>
-        <div class="map-bldg b4"></div>
-        <div class="map-bldg b5"></div>
-        <div class="map-bldg b6"></div>
-        <div class="map-bldg b7"></div>
-        <div class="map-bldg b8"></div>
-
-        <!-- Area reference: Akihabara -->
-        <div class="map-airport">
-          <div class="plane-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 4v16"/></svg>
-          </div>
-          <div class="plane-label">秋葉原エリア</div>
-        </div>
-
-        <!-- Selectable departure pins (nearby stations) -->
-        <div class="map-pin" style="top: 30%; left: 32%;" data-label="末広町駅" data-sub="東京メトロ銀座線" data-dist="450m / 徒歩 約 6分">
-          <div class="pin-icon">
-            <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
-              <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
-              <circle cx="14" cy="14" r="6" fill="white"/>
-            </svg>
-          </div>
-          <div class="pin-label">末広町</div>
-        </div>
-
-        <div class="map-pin active" style="top: 48%; left: 50%;" id="selectedPin" data-label="秋葉原駅" data-sub="JR山手線 · 総武線 · つくばエクスプレス" data-dist="現在地 / 徒歩 約 1分">
-          <div class="pin-icon">
-            <svg width="34" height="42" viewBox="0 0 28 36" fill="none">
-              <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#2844a0"/>
-              <circle cx="14" cy="14" r="6" fill="white"/>
-            </svg>
-          </div>
-          <div class="pin-label">秋葉原</div>
-        </div>
-
-        <div class="map-pin" style="top: 38%; left: 68%;" data-label="岩本町駅" data-sub="都営新宿線" data-dist="380m / 徒歩 約 5分">
-          <div class="pin-icon">
-            <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
-              <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
-              <circle cx="14" cy="14" r="6" fill="white"/>
-            </svg>
-          </div>
-          <div class="pin-label">岩本町</div>
-        </div>
-
-        <div class="map-pin" style="top: 66%; left: 28%;" data-label="御徒町駅" data-sub="JR山手線 · 京浜東北線" data-dist="620m / 徒歩 約 8分">
-          <div class="pin-icon">
-            <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
-              <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="#5b8ff0"/>
-              <circle cx="14" cy="14" r="6" fill="white"/>
-            </svg>
-          </div>
-          <div class="pin-label">御徒町</div>
-        </div>
-
-        <!-- Current location (pulsing dot) -->
-        <div class="current-location-pin" style="top: 48%; left: 50%;">
-          <div class="pulse"></div>
-          <div class="pulse-dot"></div>
-        </div>
+        <iframe
+          src="https://maps.google.com/maps?q=%E7%A7%8B%E8%91%89%E5%8E%9F%E9%A7%85&t=&z=16&ie=UTF8&iwloc=&output=embed"
+          style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen></iframe>
       </div>
 
       <!-- Search / back overlay -->
@@ -157,22 +88,25 @@
 </div>
 
 <script>
-  // Pin selection: update bottom sheet + active state
-  document.querySelectorAll('.map-pin').forEach(pin => {
-    pin.addEventListener('click', () => {
-      document.querySelectorAll('.map-pin').forEach(p => p.classList.remove('active'));
-      pin.classList.add('active');
-      document.getElementById('selTitle').textContent = pin.dataset.label;
-      document.getElementById('selSub').textContent = pin.dataset.sub;
-      document.getElementById('selDist').textContent = pin.dataset.dist;
-    });
-  });
+  // Chip selection updates bottom sheet
+  const chipMeta = {
+    '現在地を使用': { title: '現在地', sub: 'GPSで取得した位置', dist: '0 m' },
+    '秋葉原駅': { title: '秋葉原駅', sub: 'JR山手線 · 総武線 · つくばエクスプレス', dist: '現在地 / 徒歩 約 1分' },
+    '末広町駅': { title: '末広町駅', sub: '東京メトロ銀座線', dist: '450m / 徒歩 約 6分' },
+    '岩本町駅': { title: '岩本町駅', sub: '都営新宿線', dist: '380m / 徒歩 約 5分' },
+    '御徒町駅': { title: '御徒町駅', sub: 'JR山手線 · 京浜東北線', dist: '620m / 徒歩 約 8分' },
+  };
 
-  // Chip selection
   document.querySelectorAll('.loc-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
+      const meta = chipMeta[chip.textContent.trim()];
+      if (meta) {
+        document.getElementById('selTitle').textContent = meta.title;
+        document.getElementById('selSub').textContent = meta.sub;
+        document.getElementById('selDist').textContent = meta.dist;
+      }
     });
   });
 
