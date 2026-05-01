@@ -6,6 +6,68 @@
 <title>HANEDA — ナビゲート中</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<style>
+  /* Completion modal — shown 1s after the final step is confirmed */
+  .nav-complete-modal {
+    position: absolute;
+    inset: 0;
+    background: rgba(13, 27, 75, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .nav-complete-modal.open { display: flex; opacity: 1; }
+  .nav-complete-card {
+    background: #ffffff;
+    width: 280px;
+    height: 280px;
+    border-radius: 24px;
+    padding: 32px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    box-shadow: 0 24px 60px -10px rgba(13, 27, 75, 0.4);
+    transform: scale(0.92);
+    transition: transform .35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .nav-complete-modal.open .nav-complete-card { transform: scale(1); }
+  .nav-complete-icon {
+    width: 200px;
+    height: auto;
+    display: block;
+  }
+  .nav-complete-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy-900);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .nav-complete-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--navy-700);
+    color: #fff;
+    text-decoration: none;
+    padding: 11px 28px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    -webkit-tap-highlight-color: transparent;
+    transition: background .15s ease, transform .15s ease;
+  }
+  .nav-complete-cta:active { background: var(--navy-800); transform: scale(0.98); }
+</style>
 </head>
 <body>
 <div class="flow-hint">⑥ リアルタイムナビ (ナビ画面)</div>
@@ -175,6 +237,15 @@
 
       </div><!-- /nav-body -->
 
+      <!-- Completion modal -->
+      <div class="nav-complete-modal" id="completeModal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="nav-complete-card">
+          <img src="images/flight.svg" alt="" class="nav-complete-icon" />
+          <div class="nav-complete-text">素敵な空の旅を。</div>
+          <a href="main.html" class="nav-complete-cta">TOPに戻る</a>
+        </div>
+      </div>
+
       <div class="home-ind"></div>
     </div>
   </div>
@@ -324,11 +395,31 @@
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  const completeModal = document.getElementById('completeModal');
+  let completeTimer = null;
+
+  function showCompleteModal() {
+    completeModal.classList.add('open');
+    completeModal.setAttribute('aria-hidden', 'false');
+  }
+  function hideCompleteModal() {
+    completeModal.classList.remove('open');
+    completeModal.setAttribute('aria-hidden', 'true');
+    if (completeTimer) {
+      clearTimeout(completeTimer);
+      completeTimer = null;
+    }
+  }
+
   ctaBtnEl.addEventListener('click', () => {
     if (currentIdx < steps.length - 1) {
       currentIdx++;
       render();
       focusCurrentStep();
+      if (currentIdx === steps.length - 1) {
+        if (completeTimer) clearTimeout(completeTimer);
+        completeTimer = setTimeout(showCompleteModal, 1000);
+      }
     }
   });
 
@@ -337,6 +428,7 @@
       currentIdx--;
       render();
       focusCurrentStep();
+      hideCompleteModal();
     }
   });
 
