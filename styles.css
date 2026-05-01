@@ -143,11 +143,7 @@ button { font-family: inherit; cursor: pointer; }
 .screen-login {
   position: relative;
   overflow: hidden;
-  background-color: #ffffff;
-  background-image: url('images/bg.png');
-  background-position: top center;
-  background-size: 100% auto;
-  background-repeat: no-repeat;
+  background: #ffffff;
 }
 .login-sky {
   position: absolute;
@@ -214,16 +210,33 @@ button { font-family: inherit; cursor: pointer; }
 
 .login-brand {
   position: absolute;
-  top: 14%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   text-align: center;
   z-index: 3;
+  animation: logoFadeIn 1.4s cubic-bezier(.2, .65, .2, 1) both;
 }
 .brand-logo {
-  width: 170px;
+  width: 220px;
   height: auto;
   display: block;
+  user-select: none;
+}
+@keyframes logoFadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+    filter: blur(2px);
+  }
+  60% {
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
+  }
 }
 
 .login-actions {
@@ -234,20 +247,27 @@ button { font-family: inherit; cursor: pointer; }
   flex-direction: column;
   gap: 14px;
   z-index: 3;
+  animation: ctaFadeUp 1s cubic-bezier(.2, .65, .2, 1) 0.5s both;
+}
+@keyframes ctaFadeUp {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 .btn-primary {
   background: var(--navy-800);
   color: var(--white);
   border: none;
-  height: 58px;
-  border-radius: 29px;
-  font-size: 16px;
-  font-weight: 600;
+  height: 70px;
+  border-radius: 35px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 10px;
   padding: 0 28px;
-  box-shadow: 0 8px 20px -8px rgba(13, 27, 75, 0.5);
+  box-shadow: 0 10px 26px -10px rgba(13, 27, 75, 0.55);
   transition: transform .15s ease, box-shadow .15s ease;
 }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 28px -10px rgba(13, 27, 75, 0.6); }
