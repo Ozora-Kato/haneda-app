@@ -305,6 +305,14 @@ button { font-family: inherit; cursor: pointer; }
 .screen-main {
   background: linear-gradient(180deg, #f5f8ff 0%, #ffffff 40%);
   padding-top: 54px;
+  display: flex;
+  flex-direction: column;
+}
+.main-body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 110px;
 }
 .topbar {
   display: flex;
@@ -2763,5 +2771,8 @@ body.modal-open { overflow: hidden; }
   }
   .nav-body {
     padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
+  }
+  .main-body {
+    padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
   }
 }
