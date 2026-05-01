@@ -94,19 +94,8 @@
   .results-empty .ic { display: block; margin: 0 auto 10px; opacity: 0.6; }
   .results-empty.hidden { display: none; }
 
-  /* Disabled chip */
-  .filter-chip.disabled { opacity: 0.45; pointer-events: none; }
-
-  /* Filter chip with icon + label */
-  .filter-chip .cic {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 14px;
-    height: 14px;
-    margin-right: 4px;
-  }
-  .filter-chip .cic svg { width: 14px; height: 14px; }
+  /* Conditions row — reuses main.html's .cond-row / .cond-cell from styles.css */
+  .results-body .cond-row { margin-top: 12px; }
 
   /* Bigger route times (replaces the top-right arrival block) */
   .route-times {
@@ -197,19 +186,19 @@
         </div>
       </div>
 
-      <!-- Condition chips (live filters) -->
-      <div class="filter-row">
-        <button type="button" class="filter-chip" id="rcSpeed">
-          <span class="cic" id="rcSpeedIcon"></span>
-          <span id="rcSpeedText">少し急ぎ</span>
+      <!-- Conditions (live filters) — same layout as main.html -->
+      <div class="cond-row">
+        <button type="button" class="cond-cell" id="rcSpeed">
+          <span class="cond-ic" id="rcSpeedIcon"></span>
+          <span class="cond-tx" id="rcSpeedText">少し急ぎ</span>
         </button>
-        <button type="button" class="filter-chip" id="rcTaxi">
-          <span class="cic" id="rcTaxiIcon"></span>
-          <span id="rcTaxiText">タクシー: 指定なし</span>
+        <button type="button" class="cond-cell" id="rcTaxi">
+          <span class="cond-ic" id="rcTaxiIcon"></span>
+          <span class="cond-tx" id="rcTaxiText">指定なし</span>
         </button>
-        <button type="button" class="filter-chip" id="rcBus">
-          <span class="cic" id="rcBusIcon"></span>
-          <span id="rcBusText">バス: 指定なし</span>
+        <button type="button" class="cond-cell" id="rcBus">
+          <span class="cond-ic" id="rcBusIcon"></span>
+          <span class="cond-tx" id="rcBusText">指定なし</span>
         </button>
       </div>
 
@@ -343,6 +332,89 @@
               <span class="gate-sub">到着から徒歩 約<span data-walk-min>6</span>分</span>
             </div>
           </a>
+          <a href="route.html?r=fast5" class="route-card" data-uses="train,monorail" data-walk="15">
+            <div class="route-card-top">
+              <span class="route-badge normal">標準</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:43</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:20</span>
+              <span class="duration">37分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">1回</span></span>
+              <span class="item fare">料金 <span class="v">¥510</span></span>
+              <span class="item">距離 <span class="v">19km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill jr">JR山手線</span>
+              <span class="line-arrow">›</span>
+              <span class="line-pill monorail">東京モノレール</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>15</span>分</span>
+            </div>
+          </a>
+
+          <a href="route.html?r=fast6" class="route-card" data-uses="train" data-walk="18">
+            <div class="route-card-top">
+              <span class="route-badge normal">標準</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:42</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:25</span>
+              <span class="duration">43分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">1回</span></span>
+              <span class="item fare">料金 <span class="v">¥330</span></span>
+              <span class="item">距離 <span class="v">18km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill jr">都営浅草線</span>
+              <span class="line-arrow">›</span>
+              <span class="line-pill keikyu">京急エアポート急行</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>18</span>分</span>
+            </div>
+          </a>
+
+          <a href="route.html?r=fast7" class="route-card" data-uses="train" data-walk="18">
+            <div class="route-card-top">
+              <span class="route-badge normal">標準</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:40</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:32</span>
+              <span class="duration">52分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">1回</span></span>
+              <span class="item fare">料金 <span class="v">¥510</span></span>
+              <span class="item">距離 <span class="v">20km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill jr">JR京浜東北線</span>
+              <span class="line-arrow">›</span>
+              <span class="line-pill keikyu">京急本線</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>18</span>分</span>
+            </div>
+          </a>
         </div>
 
         <!-- Tab: EASY (fewest transfers) -->
@@ -430,6 +502,85 @@
               <span class="gate-sub">到着から徒歩 約<span data-walk-min>15</span>分</span>
             </div>
           </a>
+          <a href="route.html?r=easy4" class="route-card" data-uses="taxi" data-walk="6">
+            <div class="route-card-top">
+              <span class="route-badge easy">乗換0</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:55</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:28</span>
+              <span class="duration">33分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">0回</span></span>
+              <span class="item fare">料金 <span class="v">¥7,200</span></span>
+              <span class="item">距離 <span class="v">19km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill keikyu">タクシー 別経路</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>6</span>分</span>
+            </div>
+          </a>
+
+          <a href="route.html?r=easy5" class="route-card" data-uses="train" data-walk="18">
+            <div class="route-card-top">
+              <span class="route-badge easy">乗換0</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:50</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:25</span>
+              <span class="duration">35分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">0回</span></span>
+              <span class="item fare">料金 <span class="v">¥330</span></span>
+              <span class="item">距離 <span class="v">18km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill keikyu">京急エアポート急行 (浅草線直通)</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>18</span>分</span>
+            </div>
+          </a>
+
+          <a href="route.html?r=easy6" class="route-card" data-uses="train" data-walk="18">
+            <div class="route-card-top">
+              <span class="route-badge easy">乗換1</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:40</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:32</span>
+              <span class="duration">52分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">1回</span></span>
+              <span class="item fare">料金 <span class="v">¥510</span></span>
+              <span class="item">距離 <span class="v">20km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill jr">JR京浜東北線</span>
+              <span class="line-arrow">›</span>
+              <span class="line-pill keikyu">京急本線</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>18</span>分</span>
+            </div>
+          </a>
         </div>
 
         <!-- Tab: CHEAP (lowest fare) -->
@@ -515,6 +666,89 @@
               搭乗口
               <span class="gate-num">112</span>
               <span class="gate-sub">到着から徒歩 約<span data-walk-min>10</span>分</span>
+            </div>
+          </a>
+          <a href="route.html?r=cheap4" class="route-card" data-uses="train" data-walk="18">
+            <div class="route-card-top">
+              <span class="route-badge cheap">¥330</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:50</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:28</span>
+              <span class="duration">38分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">1回</span></span>
+              <span class="item fare">料金 <span class="v">¥330</span></span>
+              <span class="item">距離 <span class="v">18km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill jr">都営浅草線</span>
+              <span class="line-arrow">›</span>
+              <span class="line-pill keikyu">京急</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>18</span>分</span>
+            </div>
+          </a>
+
+          <a href="route.html?r=cheap5" class="route-card" data-uses="train" data-walk="20">
+            <div class="route-card-top">
+              <span class="route-badge normal">¥390</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:38</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:35</span>
+              <span class="duration">57分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">2回</span></span>
+              <span class="item fare">料金 <span class="v">¥390</span></span>
+              <span class="item">距離 <span class="v">19km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill jr">JR山手線</span>
+              <span class="line-arrow">›</span>
+              <span class="line-pill keikyu">京急普通</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>20</span>分</span>
+            </div>
+          </a>
+
+          <a href="route.html?r=cheap6" class="route-card" data-uses="train,walk" data-walk="22">
+            <div class="route-card-top">
+              <span class="route-badge normal">¥420</span>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:42</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:33</span>
+              <span class="duration">51分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">1回</span></span>
+              <span class="item fare">料金 <span class="v">¥420</span></span>
+              <span class="item">距離 <span class="v">19km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill keikyu">京急本線 普通</span>
+              <span class="line-arrow">›</span>
+              <span class="line-pill walk">徒歩</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>22</span>分</span>
             </div>
           </a>
         </div>
@@ -647,19 +881,19 @@
   };
 
   const speedOpts = [
-    { full: '急いで',       chip: '急いで',     icon: 'speedFast',         walk: 0.75 },
-    { full: '少し急いで',   chip: '少し急ぎ',   icon: 'speedSlightlyFast', walk: 0.9  },
+    { full: '急いで',       chip: '急いで',       icon: 'speedFast',         walk: 0.75 },
+    { full: '少し急いで',   chip: '少し急ぎ',     icon: 'speedSlightlyFast', walk: 0.9  },
     { full: '少しゆっくり', chip: '少しゆっくり', icon: 'speedSlightlySlow', walk: 1.1 },
-    { full: 'ゆっくり',     chip: 'ゆっくり',   icon: 'speedSlow',         walk: 1.3  },
+    { full: 'ゆっくり',     chip: 'ゆっくり',     icon: 'speedSlow',         walk: 1.3  },
   ];
   const taxiOpts = [
-    { full: '指定なし',             chip: 'タクシー: 指定なし',     icon: 'taxiDefault' },
-    { full: 'タクシーを利用しない', chip: 'タクシー: 利用しない',   icon: 'taxiNo' },
-    { full: 'タクシーのみで移動',   chip: 'タクシーのみ',           icon: 'taxiOnly' },
+    { full: '指定なし',             chip: '指定なし',     icon: 'taxiDefault' },
+    { full: 'タクシーを利用しない', chip: '利用しない',   icon: 'taxiNo' },
+    { full: 'タクシーのみで移動',   chip: 'タクシーのみ', icon: 'taxiOnly' },
   ];
   const busOpts = [
-    { full: '指定なし',         chip: 'バス: 指定なし',   icon: 'busDefault' },
-    { full: 'バスを利用しない', chip: 'バス: 利用しない', icon: 'busNo' },
+    { full: '指定なし',         chip: '指定なし',   icon: 'busDefault' },
+    { full: 'バスを利用しない', chip: '利用しない', icon: 'busNo' },
   ];
 
   function renderChip(chipId, iconId, textId, opts, idx) {
@@ -672,9 +906,15 @@
     renderChip('rcTaxi',  'rcTaxiIcon',  'rcTaxiText',  taxiOpts,  condState.taxi);
     renderChip('rcBus',   'rcBusIcon',   'rcBusText',   busOpts,   condState.bus);
 
-    const taxiOnly = condState.taxi === 2;
-    document.getElementById('rcSpeed').classList.toggle('disabled', taxiOnly);
-    document.getElementById('rcBus').classList.toggle('disabled', taxiOnly);
+    const speedCell = document.getElementById('rcSpeed');
+    const taxiCell  = document.getElementById('rcTaxi');
+    const busCell   = document.getElementById('rcBus');
+    const taxiOnly  = condState.taxi === 2;
+
+    speedCell.classList.toggle('disabled', taxiOnly);
+    busCell.classList.toggle('disabled', taxiOnly);
+    taxiCell.classList.toggle('soft', condState.taxi === 1);
+    busCell.classList.toggle('soft', !taxiOnly && condState.bus === 1);
   }
 
   // ---- Walk-time recompute & card filter ----
