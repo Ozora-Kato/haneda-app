@@ -3125,15 +3125,12 @@ body.modal-open { overflow: hidden; }
 @media (max-width: 480px) {
   html {
     height: 100%;
+    overflow: hidden;
     background: var(--white);
   }
-  /* Pin body to the visual viewport so iOS keyboard focus
-     cannot scroll the whole document up. Inner .main-body /
-     .flights-body / .details-body etc handle their own scroll. */
   body {
     background: var(--white);
-    position: fixed;
-    inset: 0;
+    height: 100%;
     overflow: hidden;
     overscroll-behavior: none;
   }
@@ -3152,6 +3149,11 @@ body.modal-open { overflow: hidden; }
   }
   .phone::before { display: none; }
   .screen { border-radius: 0; }
+
+  /* Make tappable controls more responsive on iOS */
+  a, button, .nav-item, .field-input, .field-select {
+    touch-action: manipulation;
+  }
 
   /* Hide simulated phone chrome — real device shows its own */
   .status-bar { display: none !important; }

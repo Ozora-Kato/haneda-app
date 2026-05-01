@@ -618,6 +618,21 @@
   // Clear errors as user fixes them
   flightInput.addEventListener('input', () => setError('flight', null));
   doneBtn.addEventListener('click', () => setError('datetime', null), true);
+
+  // iOS Safari sometimes shifts the document up when an input is focused.
+  // Force the page to stay at the top — the inner .main-body handles its
+  // own scroll for getting the focused field above the keyboard.
+  window.addEventListener('focusin', (e) => {
+    if (e.target.matches('input, textarea, select')) {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+      });
+    }
+  });
+  window.addEventListener('focusout', () => {
+    requestAnimationFrame(() => window.scrollTo(0, 0));
+  });
 })();
 </script>
 </body>
