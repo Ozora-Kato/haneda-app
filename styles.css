@@ -441,7 +441,7 @@ a.field-input {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 6px;
+  margin-top: 25px;
   box-shadow: 0 6px 18px -8px rgba(40, 68, 160, 0.6);
   transition: transform .15s ease, box-shadow .15s ease;
 }
