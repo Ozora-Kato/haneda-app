@@ -21,20 +21,36 @@
         </div>
       </div>
 
+      <!-- Header (logo + bell) -->
+      <div class="topbar">
+        <a href="main.html" class="topbar-logo" aria-label="HANEDA">
+          <img src="images/logo_yoko.svg" alt="HANEDA" />
+        </a>
+        <button class="icon-btn" aria-label="notifications">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+      </div>
+
       <div class="page-header">
         <h1>フライト検索</h1>
         <p class="page-sub">運航スケジュール・状況の確認</p>
       </div>
 
       <div class="flights-body">
+
+        <!-- 国内線 / 国際線 tabs -->
+        <div class="cat-tabs" role="tablist">
+          <button type="button" class="cat-tab active" data-cat="domestic" role="tab">国内線</button>
+          <button type="button" class="cat-tab" data-cat="international" role="tab">国際線</button>
+        </div>
+
         <!-- Filter card -->
         <div class="filter-card">
 
-          <div class="dt-toggle filter-dir">
-            <button type="button" class="dt-toggle-btn active" data-dir="dep">出発</button>
-            <button type="button" class="dt-toggle-btn" data-dir="arr">到着</button>
-          </div>
+          <!-- From / To with swap -->
+          <div class="route-row" id="routeRow"></div>
 
+          <!-- Date / Airline / Status -->
           <div class="filter-grid">
             <div class="filter-group">
               <div class="filter-label">日付</div>
@@ -47,45 +63,17 @@
             </div>
 
             <div class="filter-group">
-              <div class="filter-label" id="filterDestLabel">目的地</div>
-              <div class="field-input filter-input">
-                <div class="lead lead-locate">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
-                </div>
-                <select id="filterDest">
-                  <option value="">すべての目的地</option>
-                  <option>ロンドン (LHR)</option>
-                  <option>パリ (CDG)</option>
-                  <option>シンガポール (SIN)</option>
-                  <option>サンフランシスコ (SFO)</option>
-                  <option>ニューヨーク (JFK)</option>
-                  <option>ロサンゼルス (LAX)</option>
-                  <option>バンコク (BKK)</option>
-                  <option>シカゴ (ORD)</option>
-                </select>
-                <div class="trail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
-              </div>
-            </div>
-
-            <div class="filter-group">
               <div class="filter-label">航空会社</div>
               <div class="field-input filter-input">
                 <div class="lead lead-locate">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
                 </div>
-                <select id="filterAirline">
-                  <option value="">すべての航空会社</option>
-                  <option>ANA / 全日本空輸</option>
-                  <option>JAL / 日本航空</option>
-                  <option>SKY / スカイマーク</option>
-                  <option>ADO / AIR DO</option>
-                  <option>SFJ / スターフライヤー</option>
-                </select>
+                <select id="filterAirline"></select>
                 <div class="trail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
               </div>
             </div>
 
-            <div class="filter-group">
+            <div class="filter-group full">
               <div class="filter-label">運航状況</div>
               <div class="field-input filter-input">
                 <div class="lead lead-locate">
@@ -96,7 +84,7 @@
                   <option value="on-time">定刻</option>
                   <option value="delayed">遅延</option>
                   <option value="cancelled">欠航</option>
-                  <option value="changed">変更あり</option>
+                  <option value="changed">ゲート変更</option>
                 </select>
                 <div class="trail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
               </div>
@@ -151,50 +139,242 @@
 
 <script>
 (() => {
-  // ----- Mock flight data -----
+  // ---- Airport data ----
+  const DOMESTIC_AIRPORTS = {
+    '北海道': [
+      ['CTS','新千歳'],['HKD','函館'],['AKJ','旭川'],['KUH','釧路'],['OBO','帯広'],['MMB','女満別'],['WKJ','稚内'],
+    ],
+    '東北': [
+      ['AOJ','青森'],['MSJ','三沢'],['AXT','秋田'],['GAJ','山形'],['SDJ','仙台'],['FKS','福島'],
+    ],
+    '中部・北陸': [
+      ['NGO','中部国際'],['TOY','富山'],['KMQ','小松'],['FSZ','静岡'],['NTQ','能登'],['NJA','新潟'],
+    ],
+    '関西': [
+      ['ITM','大阪 (伊丹)'],['KIX','関西国際'],['UKB','神戸'],['SHM','南紀白浜'],
+    ],
+    '中国・四国': [
+      ['OKJ','岡山'],['HIJ','広島'],['UBJ','山口宇部'],['IZO','出雲'],['HSG','佐賀'],
+      ['TAK','高松'],['MYJ','松山'],['TKS','徳島'],['KCZ','高知'],
+    ],
+    '九州': [
+      ['FUK','福岡'],['KKJ','北九州'],['NGS','長崎'],['KMJ','熊本'],['OIT','大分'],['KMI','宮崎'],['KOJ','鹿児島'],
+    ],
+    '沖縄': [
+      ['OKA','那覇'],['MMY','宮古'],['ISG','石垣'],
+    ],
+  };
+
+  const INTERNATIONAL_AIRPORTS = {
+    'アジア': [
+      ['ICN','ソウル (仁川)'],['GMP','ソウル (金浦)'],['PUS','釜山'],
+      ['PEK','北京'],['PVG','上海 (浦東)'],['HKG','香港'],
+      ['TPE','台北 (桃園)'],['TSA','台北 (松山)'],['KHH','高雄'],
+      ['BKK','バンコク'],['SIN','シンガポール'],['KUL','クアラルンプール'],
+      ['MNL','マニラ'],['CGK','ジャカルタ'],['HAN','ハノイ'],['SGN','ホーチミン'],
+    ],
+    '北米': [
+      ['JFK','ニューヨーク (JFK)'],['LAX','ロサンゼルス'],['SFO','サンフランシスコ'],
+      ['SEA','シアトル'],['ORD','シカゴ'],['IAD','ワシントン (DC)'],
+      ['HNL','ホノルル'],['YVR','バンクーバー'],['YYZ','トロント'],
+    ],
+    '欧州': [
+      ['LHR','ロンドン (ヒースロー)'],['CDG','パリ (シャルル・ド・ゴール)'],
+      ['FRA','フランクフルト'],['MUC','ミュンヘン'],['AMS','アムステルダム'],
+      ['HEL','ヘルシンキ'],['VIE','ウィーン'],['IST','イスタンブール'],
+      ['FCO','ローマ'],['MXP','ミラノ'],['MAD','マドリード'],
+    ],
+    'オセアニア': [
+      ['SYD','シドニー'],['MEL','メルボルン'],['AKL','オークランド'],
+    ],
+    '中東・アフリカ': [
+      ['DXB','ドバイ'],['DOH','ドーハ'],
+    ],
+  };
+
+  const DOMESTIC_AIRLINES = [
+    'ANA / 全日本空輸','JAL / 日本航空','SKY / スカイマーク','ADO / AIR DO',
+    'SFJ / スターフライヤー','SNA / ソラシド エア','IBX / IBEXエアラインズ','JTA / 日本トランスオーシャン航空',
+  ];
+  const INTERNATIONAL_AIRLINES = [
+    'ANA / 全日本空輸','JAL / 日本航空',
+    'BA / ブリティッシュ・エアウェイズ','AF / エールフランス','KL / KLMオランダ航空',
+    'KE / 大韓航空','OZ / アシアナ航空','CA / 中国国際航空','CX / キャセイパシフィック航空',
+    'SQ / シンガポール航空','TG / タイ国際航空',
+    'AA / アメリカン航空','DL / デルタ航空','UA / ユナイテッド航空',
+    'AC / エア・カナダ','QF / カンタス航空',
+  ];
+
+  // ---- Mock flight data ----
   const FLIGHTS = [
-    { dir: 'dep', no: 'NH123', airline: 'ANA', from: '東京 (HND)', to: 'ロンドン (LHR)',           dep: '13:00', arr: '17:55', gate: '112', terminal: 3, status: 'on-time' },
-    { dir: 'dep', no: 'JL45',  airline: 'JAL', from: '東京 (HND)', to: 'パリ (CDG)',                dep: '14:30', arr: '19:30', gate: '115', terminal: 3, status: 'delayed', delayMin: 30 },
-    { dir: 'dep', no: 'NH67',  airline: 'ANA', from: '東京 (HND)', to: 'シンガポール (SIN)',         dep: '16:00', arr: '22:30', gate: '108', terminal: 3, status: 'on-time' },
-    { dir: 'dep', no: 'JL456', airline: 'JAL', from: '東京 (HND)', to: 'サンフランシスコ (SFO)',     dep: '17:30', arr: '11:00', gate: '102', terminal: 3, status: 'cancelled' },
-    { dir: 'dep', no: 'NH211', airline: 'ANA', from: '東京 (HND)', to: 'ニューヨーク (JFK)',         dep: '18:00', arr: '17:30', gate: '110', terminal: 3, status: 'on-time' },
-    { dir: 'dep', no: 'NH200', airline: 'ANA', from: '東京 (HND)', to: 'ロサンゼルス (LAX)',         dep: '21:55', arr: '15:30', gate: '105', terminal: 3, status: 'changed', gateChangedFrom: '107' },
-    { dir: 'arr', no: 'JL400', airline: 'JAL', from: 'ロサンゼルス (LAX)', to: '東京 (HND)',         dep: '20:30', arr: '11:45', gate: '146', terminal: 3, status: 'on-time' },
-    { dir: 'arr', no: 'NH7',   airline: 'ANA', from: 'シカゴ (ORD)', to: '東京 (HND)',               dep: '11:30', arr: '15:00', gate: '148', terminal: 3, status: 'on-time' },
-    { dir: 'arr', no: 'NH849', airline: 'ANA', from: 'バンコク (BKK)', to: '東京 (HND)',             dep: '07:00', arr: '12:30', gate: '142', terminal: 3, status: 'delayed', delayMin: 15 },
-    { dir: 'arr', no: 'JL44',  airline: 'JAL', from: 'パリ (CDG)', to: '東京 (HND)',                dep: '13:25', arr: '08:55', gate: '141', terminal: 3, status: 'on-time' },
+    // Domestic — departures from HND
+    { cat: 'domestic', dir: 'dep', no: 'NH53',  airline: 'ANA', from: '東京 (HND)', fromCode:'HND', to: '札幌 (CTS)',     toCode:'CTS', dep:'08:30', arr:'10:00', gate:'64',  terminal:2, status:'on-time' },
+    { cat: 'domestic', dir: 'dep', no: 'JL101', airline: 'JAL', from: '東京 (HND)', fromCode:'HND', to: '大阪 (ITM)',     toCode:'ITM', dep:'09:00', arr:'10:10', gate:'14',  terminal:1, status:'on-time' },
+    { cat: 'domestic', dir: 'dep', no: 'NH241', airline: 'ANA', from: '東京 (HND)', fromCode:'HND', to: '福岡 (FUK)',     toCode:'FUK', dep:'11:30', arr:'13:30', gate:'67',  terminal:2, status:'delayed', delayMin:15 },
+    { cat: 'domestic', dir: 'dep', no: 'JL305', airline: 'JAL', from: '東京 (HND)', fromCode:'HND', to: '那覇 (OKA)',     toCode:'OKA', dep:'12:00', arr:'14:50', gate:'23',  terminal:1, status:'on-time' },
+    { cat: 'domestic', dir: 'dep', no: 'NH85',  airline: 'ANA', from: '東京 (HND)', fromCode:'HND', to: '広島 (HIJ)',     toCode:'HIJ', dep:'13:15', arr:'14:40', gate:'69',  terminal:2, status:'on-time' },
+    { cat: 'domestic', dir: 'dep', no: 'SKY719',airline: 'SKY', from: '東京 (HND)', fromCode:'HND', to: '熊本 (KMJ)',     toCode:'KMJ', dep:'14:00', arr:'15:55', gate:'22',  terminal:1, status:'cancelled' },
+    // Domestic — arrivals to HND
+    { cat: 'domestic', dir: 'arr', no: 'NH54',  airline: 'ANA', from: '札幌 (CTS)', fromCode:'CTS', to: '東京 (HND)',     toCode:'HND', dep:'07:00', arr:'08:30', gate:'60',  terminal:2, status:'on-time' },
+    { cat: 'domestic', dir: 'arr', no: 'JL102', airline: 'JAL', from: '大阪 (ITM)', fromCode:'ITM', to: '東京 (HND)',     toCode:'HND', dep:'10:30', arr:'11:35', gate:'15',  terminal:1, status:'on-time' },
+    { cat: 'domestic', dir: 'arr', no: 'JL920', airline: 'JAL', from: '那覇 (OKA)', fromCode:'OKA', to: '東京 (HND)',     toCode:'HND', dep:'09:15', arr:'12:00', gate:'13',  terminal:1, status:'changed', gateChangedFrom:'11' },
+
+    // International — departures from HND
+    { cat: 'international', dir: 'dep', no: 'NH123', airline: 'ANA', from: '東京 (HND)', fromCode:'HND', to: 'ロンドン (LHR)',         toCode:'LHR', dep:'13:00', arr:'17:55', gate:'112', terminal:3, status:'on-time' },
+    { cat: 'international', dir: 'dep', no: 'JL45',  airline: 'JAL', from: '東京 (HND)', fromCode:'HND', to: 'パリ (CDG)',             toCode:'CDG', dep:'14:30', arr:'19:30', gate:'115', terminal:3, status:'delayed', delayMin:30 },
+    { cat: 'international', dir: 'dep', no: 'NH67',  airline: 'ANA', from: '東京 (HND)', fromCode:'HND', to: 'シンガポール (SIN)',     toCode:'SIN', dep:'16:00', arr:'22:30', gate:'108', terminal:3, status:'on-time' },
+    { cat: 'international', dir: 'dep', no: 'JL456', airline: 'JAL', from: '東京 (HND)', fromCode:'HND', to: 'サンフランシスコ (SFO)', toCode:'SFO', dep:'17:30', arr:'11:00', gate:'102', terminal:3, status:'cancelled' },
+    { cat: 'international', dir: 'dep', no: 'NH211', airline: 'ANA', from: '東京 (HND)', fromCode:'HND', to: 'ニューヨーク (JFK)',     toCode:'JFK', dep:'18:00', arr:'17:30', gate:'110', terminal:3, status:'on-time' },
+    { cat: 'international', dir: 'dep', no: 'NH200', airline: 'ANA', from: '東京 (HND)', fromCode:'HND', to: 'ロサンゼルス (LAX)',     toCode:'LAX', dep:'21:55', arr:'15:30', gate:'105', terminal:3, status:'changed', gateChangedFrom:'107' },
+    // International — arrivals to HND
+    { cat: 'international', dir: 'arr', no: 'JL400', airline: 'JAL', from: 'ロサンゼルス (LAX)', fromCode:'LAX', to: '東京 (HND)', toCode:'HND', dep:'20:30', arr:'11:45', gate:'146', terminal:3, status:'on-time' },
+    { cat: 'international', dir: 'arr', no: 'NH7',   airline: 'ANA', from: 'シカゴ (ORD)',       fromCode:'ORD', to: '東京 (HND)', toCode:'HND', dep:'11:30', arr:'15:00', gate:'148', terminal:3, status:'on-time' },
+    { cat: 'international', dir: 'arr', no: 'NH849', airline: 'ANA', from: 'バンコク (BKK)',     fromCode:'BKK', to: '東京 (HND)', toCode:'HND', dep:'07:00', arr:'12:30', gate:'142', terminal:3, status:'delayed', delayMin:15 },
+    { cat: 'international', dir: 'arr', no: 'JL44',  airline: 'JAL', from: 'パリ (CDG)',         fromCode:'CDG', to: '東京 (HND)', toCode:'HND', dep:'13:25', arr:'08:55', gate:'141', terminal:3, status:'on-time' },
   ];
 
   const STATUS_LABEL = {
-    'on-time':  '定刻',
-    'delayed':  '遅延',
-    'cancelled':'欠航',
-    'changed':  'ゲート変更',
+    'on-time':'定刻','delayed':'遅延','cancelled':'欠航','changed':'ゲート変更',
   };
 
   const $ = (id) => document.getElementById(id);
 
-  // Init date filter to today
+  // ---- State ----
   const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth()+1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  $('filterDate').value = `${yyyy}-${mm}-${dd}`;
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const state = {
+    category: 'domestic',  // 'domestic' | 'international'
+    routeMode: 'dep',      // 'dep' = HND→other (出発), 'arr' = other→HND (到着)
+    airportCode: '',       // selected non-HND airport
+  };
 
-  // Direction toggle
-  let direction = 'dep';
-  document.querySelectorAll('.filter-dir .dt-toggle-btn').forEach((b) => {
-    b.addEventListener('click', () => {
-      document.querySelectorAll('.filter-dir .dt-toggle-btn').forEach((x) => x.classList.remove('active'));
-      b.classList.add('active');
-      direction = b.dataset.dir;
-      $('filterDestLabel').textContent = direction === 'dep' ? '目的地' : '出発地';
-      const sel = $('filterDest');
-      sel.querySelector('option[value=""]').textContent = direction === 'dep' ? 'すべての目的地' : 'すべての出発地';
+  // ---- HTML builders ----
+  function airportOptionsHTML(catData, defaultText) {
+    let html = `<option value="">${defaultText}</option>`;
+    Object.entries(catData).forEach(([region, list]) => {
+      html += `<optgroup label="${region}">`;
+      list.forEach(([code, name]) => {
+        html += `<option value="${code}">${name} (${code})</option>`;
+      });
+      html += `</optgroup>`;
+    });
+    return html;
+  }
+
+  function airlineOptionsHTML(arr) {
+    let html = '<option value="">すべての航空会社</option>';
+    arr.forEach((a) => { html += `<option>${a}</option>`; });
+    return html;
+  }
+
+  function planeIconSVG() {
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>`;
+  }
+  function pinIconSVG() {
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>`;
+  }
+  function chevronSVG() {
+    return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>`;
+  }
+
+  function hndBlockHTML(label) {
+    return `
+      <div class="filter-group">
+        <div class="filter-label">${label}</div>
+        <div class="field-input filter-input filter-static">
+          <div class="lead lead-locate">${pinIconSVG()}</div>
+          <div class="hnd-static">東京 (HND)</div>
+        </div>
+      </div>`;
+  }
+
+  function airportBlockHTML(label, defaultText) {
+    const data = state.category === 'domestic' ? DOMESTIC_AIRPORTS : INTERNATIONAL_AIRPORTS;
+    return `
+      <div class="filter-group">
+        <div class="filter-label">${label}</div>
+        <div class="field-input filter-input">
+          <div class="lead lead-locate">${planeIconSVG()}</div>
+          <select id="airportSelect">${airportOptionsHTML(data, defaultText)}</select>
+          <div class="trail">${chevronSVG()}</div>
+        </div>
+      </div>`;
+  }
+
+  function swapButtonHTML() {
+    return `
+      <div class="route-swap-row">
+        <button type="button" class="route-swap" id="routeSwap" aria-label="出発地と目的地を入れ替え">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </button>
+      </div>`;
+  }
+
+  // ---- Render route row ----
+  function renderRouteRow() {
+    const wrap = $('routeRow');
+    const dropdownLabel = state.routeMode === 'dep' ? '目的地' : '出発地';
+    const dropdownDefault = state.routeMode === 'dep' ? 'すべての目的地' : 'すべての出発地';
+    const hndLabel = state.routeMode === 'dep' ? '出発地' : '目的地';
+
+    if (state.routeMode === 'dep') {
+      wrap.innerHTML = hndBlockHTML(hndLabel) + swapButtonHTML() + airportBlockHTML(dropdownLabel, dropdownDefault);
+    } else {
+      wrap.innerHTML = airportBlockHTML(dropdownLabel, dropdownDefault) + swapButtonHTML() + hndBlockHTML(hndLabel);
+    }
+    // Restore selection
+    const sel = $('airportSelect');
+    if (sel) {
+      sel.value = state.airportCode || '';
+      sel.addEventListener('change', () => {
+        state.airportCode = sel.value;
+        render();
+      });
+    }
+    $('routeSwap').addEventListener('click', onSwap);
+  }
+
+  function onSwap() {
+    state.routeMode = state.routeMode === 'dep' ? 'arr' : 'dep';
+    renderRouteRow();
+    render();
+  }
+
+  // ---- Tabs (国内線 / 国際線) ----
+  document.querySelectorAll('.cat-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.cat-tab').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      state.category = tab.dataset.cat;
+      state.airportCode = ''; // reset airport selection (different list)
+      renderRouteRow();
+      $('filterAirline').innerHTML = airlineOptionsHTML(
+        state.category === 'domestic' ? DOMESTIC_AIRLINES : INTERNATIONAL_AIRLINES
+      );
       render();
     });
   });
 
+  // Init airline + date + status listeners
+  $('filterDate').value = todayStr;
+  $('filterAirline').innerHTML = airlineOptionsHTML(DOMESTIC_AIRLINES);
+  ['filterAirline', 'filterStatus', 'filterDate'].forEach((id) => {
+    $(id).addEventListener('change', render);
+  });
+
+  $('filterApply').addEventListener('click', render);
+
+  $('filterClear').addEventListener('click', () => {
+    state.routeMode = 'dep';
+    state.airportCode = '';
+    $('filterDate').value = todayStr;
+    $('filterAirline').value = '';
+    $('filterStatus').value = '';
+    renderRouteRow();
+    render();
+  });
+
+  // ---- Flight rendering ----
   function statusBadge(f) {
     const cls = `status-badge status-${f.status}`;
     let label = STATUS_LABEL[f.status];
@@ -204,9 +384,6 @@
 
   function flightCard(f) {
     const time = f.dir === 'dep' ? f.dep : f.arr;
-    const route = f.dir === 'dep'
-      ? `${f.from} <span class="arr">→</span> ${f.to}`
-      : `${f.from} <span class="arr">→</span> ${f.to}`;
     return `
       <div class="flight-card">
         <div class="flight-card-top">
@@ -222,34 +399,35 @@
           <div class="flight-time">${time}</div>
           ${statusBadge(f)}
         </div>
-        <div class="flight-route">${route}</div>
+        <div class="flight-route">${f.from} <span class="arr">→</span> ${f.to}</div>
         <div class="flight-meta">
           <span>ゲート <strong>${f.gate}</strong></span>
           <span>第${f.terminal}ターミナル</span>
           ${f.status === 'changed' && f.gateChangedFrom ? `<span class="changed-note">${f.gateChangedFrom} → ${f.gate}</span>` : ''}
         </div>
-      </div>
-    `;
+      </div>`;
   }
 
   function render() {
-    const dest = $('filterDest').value;
-    const airline = $('filterAirline').value;
+    const dir = state.routeMode;
+    const airlineCode = ($('filterAirline').value || '').split(' ')[0];
     const status = $('filterStatus').value;
+    const airport = state.airportCode;
 
     const filtered = FLIGHTS.filter((f) => {
-      if (f.dir !== direction) return false;
-      if (dest && (f.to !== dest && f.from !== dest)) return false;
-      if (airline) {
-        const code = airline.split(' ')[0]; // "ANA" from "ANA / 全日本空輸"
-        if (f.airline !== code) return false;
+      if (f.cat !== state.category) return false;
+      if (f.dir !== dir) return false;
+      if (airport) {
+        const otherCode = dir === 'dep' ? f.toCode : f.fromCode;
+        if (otherCode !== airport) return false;
       }
+      if (airlineCode && f.airline !== airlineCode) return false;
       if (status && f.status !== status) return false;
       return true;
     });
 
     $('resultCount').textContent = filtered.length;
-    $('resultSubtitle').textContent = direction === 'dep' ? '出発便' : '到着便';
+    $('resultSubtitle').textContent = dir === 'dep' ? '出発便' : '到着便';
     $('flightList').innerHTML = filtered.map(flightCard).join('');
     $('flightEmpty').hidden = filtered.length > 0;
   }
@@ -263,25 +441,8 @@
     }
   });
 
-  $('filterApply').addEventListener('click', render);
-  ['filterDest', 'filterAirline', 'filterStatus', 'filterDate'].forEach((id) => {
-    $(id).addEventListener('change', render);
-  });
-
-  $('filterClear').addEventListener('click', () => {
-    $('filterDest').value = '';
-    $('filterAirline').value = '';
-    $('filterStatus').value = '';
-    $('filterDate').value = `${yyyy}-${mm}-${dd}`;
-    direction = 'dep';
-    document.querySelectorAll('.filter-dir .dt-toggle-btn').forEach((b) => {
-      b.classList.toggle('active', b.dataset.dir === 'dep');
-    });
-    $('filterDestLabel').textContent = '目的地';
-    $('filterDest').querySelector('option[value=""]').textContent = 'すべての目的地';
-    render();
-  });
-
+  // Initial render
+  renderRouteRow();
   render();
 })();
 </script>
