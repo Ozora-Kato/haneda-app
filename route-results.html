@@ -6,6 +6,39 @@
 <title>HANEDA — ルート検索結果</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<style>
+  /* OD card with 3 rows */
+  .od-row { gap: 8px; }
+  .od-row .od-content { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .od-row .od-place { font-weight: 700; color: #1c1f2a; font-size: 14px; }
+  .od-row .od-sub { font-size: 11px; color: #7a808d; }
+  .od-row .flight-num { font-size: 15px; letter-spacing: 0.04em; }
+  .od-dot.flight { background: #f59e0b; }
+
+  /* Empty state when filters hide all results */
+  .results-empty {
+    padding: 32px 20px;
+    text-align: center;
+    color: #7a808d;
+    font-size: 13px;
+  }
+  .results-empty .ic { display: block; margin: 0 auto 10px; opacity: 0.6; }
+  .results-empty.hidden { display: none; }
+
+  /* Disabled chip */
+  .filter-chip.disabled { opacity: 0.45; pointer-events: none; }
+
+  /* Filter chip with icon + label */
+  .filter-chip .cic {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+  }
+  .filter-chip .cic svg { width: 14px; height: 14px; }
+</style>
 </head>
 <body>
 <div class="flow-hint">④ ルート検索結果画面</div>
@@ -31,36 +64,49 @@
 
       <div class="results-body">
 
-      <!-- Origin / Destination -->
+      <!-- Origin / Flight / Destination -->
       <div class="od-card">
         <div class="od-row">
           <span class="od-dot from"></span>
-          <span class="od-label">現在地</span>
-          <span class="od-place">秋葉原駅</span>
-          <button class="od-swap" aria-label="swap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-          </button>
+          <div class="od-content">
+            <span class="od-label">出発</span>
+            <span class="od-place" id="odFrom">秋葉原駅</span>
+          </div>
+        </div>
+        <div class="od-line"></div>
+        <div class="od-row">
+          <span class="od-dot flight"></span>
+          <div class="od-content">
+            <span class="od-label">フライト</span>
+            <span class="od-place flight-num" id="odFlight">NH123</span>
+            <span class="od-sub" id="odFlightSub">12:30発 · ロンドン (LHR) 行</span>
+          </div>
         </div>
         <div class="od-line"></div>
         <div class="od-row">
           <span class="od-dot to"></span>
-          <span class="od-label">目的地</span>
-          <span class="od-place">羽田空港 搭乗口 112</span>
-          <span style="width: 32px;"></span>
+          <div class="od-content">
+            <span class="od-label">到着</span>
+            <span class="od-place" id="odTo">羽田空港 第2ターミナル</span>
+            <span class="od-sub" id="odToSub">搭乗口 112</span>
+          </div>
         </div>
       </div>
 
-      <!-- Filters -->
+      <!-- Condition chips (live filters) -->
       <div class="filter-row">
-        <div class="filter-chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          13:00 出発 →
-        </div>
-        <div class="filter-chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M3 12h6m6 0h6"/></svg>
-          全路線
-        </div>
-        <div class="filter-chip">並び替え</div>
+        <button type="button" class="filter-chip" id="rcSpeed">
+          <span class="cic" id="rcSpeedIcon"></span>
+          <span id="rcSpeedText">少し急ぎ</span>
+        </button>
+        <button type="button" class="filter-chip" id="rcTaxi">
+          <span class="cic" id="rcTaxiIcon"></span>
+          <span id="rcTaxiText">タクシー: 指定なし</span>
+        </button>
+        <button type="button" class="filter-chip" id="rcBus">
+          <span class="cic" id="rcBusIcon"></span>
+          <span id="rcBusText">バス: 指定なし</span>
+        </button>
       </div>
 
       <!-- Tabs -->
@@ -84,7 +130,7 @@
 
         <!-- Tab: FAST -->
         <div class="tab-panel active" data-panel="fast">
-          <a href="route.html?r=fast" class="route-card">
+          <a href="route.html?r=fast" class="route-card" data-uses="train" data-walk="18">
             <div class="route-card-top">
               <span class="route-badge fast">最速</span>
               <div class="arrive-time">
@@ -112,11 +158,11 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約18分 · 搭乗 12:30</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>18</span>分 · 搭乗 12:30</span>
             </div>
           </a>
 
-          <a href="route.html?r=fast2" class="route-card">
+          <a href="route.html?r=fast2" class="route-card" data-uses="train,monorail,walk" data-walk="15">
             <div class="route-card-top">
               <span class="route-badge normal">標準</span>
               <div class="arrive-time">
@@ -146,11 +192,11 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約15分</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>15</span>分</span>
             </div>
           </a>
 
-          <a href="route.html?r=fast3" class="route-card">
+          <a href="route.html?r=fast3" class="route-card" data-uses="bus" data-walk="10">
             <div class="route-card-top">
               <span class="route-badge normal">標準</span>
               <div class="arrive-time">
@@ -176,14 +222,44 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約10分</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>10</span>分</span>
+            </div>
+          </a>
+
+          <a href="route.html?r=taxi" class="route-card" data-uses="taxi" data-walk="6">
+            <div class="route-card-top">
+              <span class="route-badge fast">タクシー</span>
+              <div class="arrive-time">
+                <div class="lb">到着</div>
+                <div class="v">10:22</div>
+              </div>
+            </div>
+            <div class="route-times">
+              <span class="dep">09:50</span>
+              <span class="arrow">→</span>
+              <span class="arr">10:22</span>
+              <span class="duration">32分</span>
+            </div>
+            <div class="route-meta">
+              <span class="item">乗換 <span class="v">0回</span></span>
+              <span class="item fare">料金 <span class="v">¥7,800</span></span>
+              <span class="item">距離 <span class="v">19km</span></span>
+            </div>
+            <div class="line-pills">
+              <span class="line-pill keikyu">タクシー 直行</span>
+            </div>
+            <div class="gate-ref">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+              搭乗口
+              <span class="gate-num">112</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>6</span>分</span>
             </div>
           </a>
         </div>
 
         <!-- Tab: EASY (fewest transfers) -->
         <div class="tab-panel" data-panel="easy">
-          <a href="route.html?r=easy" class="route-card">
+          <a href="route.html?r=easy" class="route-card" data-uses="bus" data-walk="10">
             <div class="route-card-top">
               <span class="route-badge easy">乗換0</span>
               <div class="arrive-time">
@@ -209,11 +285,11 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約10分</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>10</span>分</span>
             </div>
           </a>
 
-          <a href="route.html?r=fast" class="route-card">
+          <a href="route.html?r=fast" class="route-card" data-uses="train" data-walk="18">
             <div class="route-card-top">
               <span class="route-badge easy">乗換1</span>
               <div class="arrive-time">
@@ -241,11 +317,11 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約18分</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>18</span>分</span>
             </div>
           </a>
 
-          <a href="route.html?r=fast2" class="route-card">
+          <a href="route.html?r=fast2" class="route-card" data-uses="train,monorail,walk" data-walk="15">
             <div class="route-card-top">
               <span class="route-badge normal">乗換2</span>
               <div class="arrive-time">
@@ -275,14 +351,14 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約15分</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>15</span>分</span>
             </div>
           </a>
         </div>
 
         <!-- Tab: CHEAP (lowest fare) -->
         <div class="tab-panel" data-panel="cheap">
-          <a href="route.html?r=fast" class="route-card">
+          <a href="route.html?r=fast" class="route-card" data-uses="train" data-walk="18">
             <div class="route-card-top">
               <span class="route-badge cheap">最安</span>
               <div class="arrive-time">
@@ -310,11 +386,11 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約18分</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>18</span>分</span>
             </div>
           </a>
 
-          <a href="route.html?r=fast2" class="route-card">
+          <a href="route.html?r=fast2" class="route-card" data-uses="train,monorail,walk" data-walk="15">
             <div class="route-card-top">
               <span class="route-badge normal">¥510</span>
               <div class="arrive-time">
@@ -344,11 +420,11 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約15分</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>15</span>分</span>
             </div>
           </a>
 
-          <a href="route.html?r=easy" class="route-card">
+          <a href="route.html?r=easy" class="route-card" data-uses="bus" data-walk="10">
             <div class="route-card-top">
               <span class="route-badge normal">¥1,200</span>
               <div class="arrive-time">
@@ -374,14 +450,71 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
               搭乗口
               <span class="gate-num">112</span>
-              <span class="gate-sub">到着から徒歩 約10分</span>
+              <span class="gate-sub">到着から徒歩 約<span data-walk-min>10</span>分</span>
             </div>
           </a>
         </div>
 
       </div>
 
+      <!-- Empty state -->
+      <div class="results-empty hidden" id="resultsEmpty">
+        <svg class="ic" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        現在の条件に合うルートが見つかりませんでした。<br>条件を変更してみてください。
+      </div>
+
       </div><!-- /results-body -->
+
+      <!-- Speed modal (option list) -->
+      <div class="dt-modal" id="speedModal" aria-hidden="true">
+        <div class="dt-backdrop" data-dismiss="speedModal"></div>
+        <div class="dt-sheet" role="dialog" aria-modal="true">
+          <div class="dt-handle"></div>
+          <div class="dt-header">
+            <button type="button" class="dt-cancel" data-dismiss="speedModal">キャンセル</button>
+            <h3>歩く速度</h3>
+            <span class="dt-spacer"></span>
+          </div>
+          <ul class="opt-list" id="speedList"></ul>
+          <div class="dt-footer">
+            <button type="button" class="dt-done" id="speedDone">完了</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taxi modal -->
+      <div class="dt-modal" id="taxiModal" aria-hidden="true">
+        <div class="dt-backdrop" data-dismiss="taxiModal"></div>
+        <div class="dt-sheet" role="dialog" aria-modal="true">
+          <div class="dt-handle"></div>
+          <div class="dt-header">
+            <button type="button" class="dt-cancel" data-dismiss="taxiModal">キャンセル</button>
+            <h3>タクシー利用</h3>
+            <span class="dt-spacer"></span>
+          </div>
+          <ul class="opt-list" id="taxiList"></ul>
+          <div class="dt-footer">
+            <button type="button" class="dt-done" id="taxiDone">完了</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bus modal -->
+      <div class="dt-modal" id="busModal" aria-hidden="true">
+        <div class="dt-backdrop" data-dismiss="busModal"></div>
+        <div class="dt-sheet" role="dialog" aria-modal="true">
+          <div class="dt-handle"></div>
+          <div class="dt-header">
+            <button type="button" class="dt-cancel" data-dismiss="busModal">キャンセル</button>
+            <h3>バス利用</h3>
+            <span class="dt-spacer"></span>
+          </div>
+          <ul class="opt-list" id="busList"></ul>
+          <div class="dt-footer">
+            <button type="button" class="dt-done" id="busDone">完了</button>
+          </div>
+        </div>
+      </div>
 
       <div class="home-ind"></div>
     </div>
@@ -389,6 +522,212 @@
 </div>
 
 <script>
+(() => {
+  // ---- Flight DB (mock) ----
+  const FLIGHTS = {
+    'NH123': { airline: 'ANA', dest: 'ロンドン (LHR)', depart: '12:30', terminal: '第2ターミナル', gate: '112' },
+    'JL45':  { airline: 'JAL', dest: 'ニューヨーク (JFK)', depart: '11:00', terminal: '第3ターミナル', gate: '109' },
+    'NH67':  { airline: 'ANA', dest: 'ホノルル (HNL)', depart: '21:45', terminal: '第2ターミナル', gate: '113' },
+    'NH200': { airline: 'ANA', dest: 'シンガポール (SIN)', depart: '11:20', terminal: '第2ターミナル', gate: '110' },
+    'NH211': { airline: 'ANA', dest: 'パリ (CDG)', depart: '10:45', terminal: '第2ターミナル', gate: '114' },
+    'JL400': { airline: 'JAL', dest: 'ロンドン (LHR)', depart: '11:55', terminal: '第3ターミナル', gate: '108' },
+    'JL456': { airline: 'JAL', dest: 'ロサンゼルス (LAX)', depart: '17:05', terminal: '第3ターミナル', gate: '111' },
+  };
+
+  // ---- Read state from localStorage ----
+  const flight = (localStorage.getItem('haneda:flight') || 'NH123').toUpperCase();
+  const fromLoc = localStorage.getItem('haneda:location') || '秋葉原駅';
+  let condState = { speed: 1, taxi: 0, bus: 0 };
+  try {
+    const raw = localStorage.getItem('haneda:conditions');
+    if (raw) condState = { ...condState, ...JSON.parse(raw) };
+  } catch (e) {}
+
+  function persist() {
+    localStorage.setItem('haneda:conditions', JSON.stringify(condState));
+  }
+
+  // ---- Populate OD card ----
+  const flightInfo = FLIGHTS[flight] || { airline: '', dest: '—', depart: '—', terminal: '第2ターミナル', gate: '112' };
+  document.getElementById('odFrom').textContent = fromLoc;
+  document.getElementById('odFlight').textContent = flight;
+  document.getElementById('odFlightSub').textContent = `${flightInfo.depart}発 · ${flightInfo.dest} 行`;
+  document.getElementById('odTo').textContent = `羽田空港 ${flightInfo.terminal}`;
+  document.getElementById('odToSub').textContent = `搭乗口 ${flightInfo.gate}`;
+
+  // ---- Conditions ----
+  const ICONS = {
+    speedFast: '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor"/></svg>',
+    speedSlightlyFast: '<svg viewBox="0 0 24 24"><polygon points="13 19 22 12 13 5 13 19" fill="currentColor"/><polygon points="2 19 11 12 2 5 2 19" fill="currentColor"/></svg>',
+    speedSlightlySlow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+    speedSlow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    taxiDefault: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg>',
+    taxiOnly: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/></svg>',
+    taxiNo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63"/><circle cx="6.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/><line x1="3" y1="3" x2="21" y2="21"/></svg>',
+    busDefault: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg>',
+    busNo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6v5"/><path d="M15 6v5"/><path d="M2 12h19"/><path d="M18 18h3v-3l-1.4-5C19 7.8 18 7 17 7H5a2 2 0 0 0-2 2v9h3"/><circle cx="7" cy="18" r="1.5"/><circle cx="17" cy="18" r="1.5"/><line x1="3" y1="3" x2="21" y2="21"/></svg>',
+  };
+
+  const speedOpts = [
+    { full: '急いで',       chip: '急いで',     icon: 'speedFast',         walk: 0.75 },
+    { full: '少し急いで',   chip: '少し急ぎ',   icon: 'speedSlightlyFast', walk: 0.9  },
+    { full: '少しゆっくり', chip: '少しゆっくり', icon: 'speedSlightlySlow', walk: 1.1 },
+    { full: 'ゆっくり',     chip: 'ゆっくり',   icon: 'speedSlow',         walk: 1.3  },
+  ];
+  const taxiOpts = [
+    { full: '指定なし',             chip: 'タクシー: 指定なし',     icon: 'taxiDefault' },
+    { full: 'タクシーを利用しない', chip: 'タクシー: 利用しない',   icon: 'taxiNo' },
+    { full: 'タクシーのみで移動',   chip: 'タクシーのみ',           icon: 'taxiOnly' },
+  ];
+  const busOpts = [
+    { full: '指定なし',         chip: 'バス: 指定なし',   icon: 'busDefault' },
+    { full: 'バスを利用しない', chip: 'バス: 利用しない', icon: 'busNo' },
+  ];
+
+  function renderChip(chipId, iconId, textId, opts, idx) {
+    document.getElementById(iconId).innerHTML = ICONS[opts[idx].icon];
+    document.getElementById(textId).textContent = opts[idx].chip;
+  }
+
+  function renderChips() {
+    renderChip('rcSpeed', 'rcSpeedIcon', 'rcSpeedText', speedOpts, condState.speed);
+    renderChip('rcTaxi',  'rcTaxiIcon',  'rcTaxiText',  taxiOpts,  condState.taxi);
+    renderChip('rcBus',   'rcBusIcon',   'rcBusText',   busOpts,   condState.bus);
+
+    const taxiOnly = condState.taxi === 2;
+    document.getElementById('rcSpeed').classList.toggle('disabled', taxiOnly);
+    document.getElementById('rcBus').classList.toggle('disabled', taxiOnly);
+  }
+
+  // ---- Walk-time recompute & card filter ----
+  const baseWalk = new Map();
+  document.querySelectorAll('.route-card').forEach((card) => {
+    baseWalk.set(card, parseInt(card.dataset.walk || '0', 10));
+  });
+
+  function applyFilters() {
+    const taxi = condState.taxi; // 0=any, 1=no, 2=only
+    const bus = condState.bus;   // 0=any, 1=no
+    const speedMul = speedOpts[condState.speed].walk;
+
+    let visibleCount = 0;
+    document.querySelectorAll('.tab-panel').forEach((panel) => {
+      const isActive = panel.classList.contains('active');
+      panel.querySelectorAll('.route-card').forEach((card) => {
+        const uses = (card.dataset.uses || '').split(',').map(s => s.trim());
+        const usesBus = uses.includes('bus');
+        const usesTaxi = uses.includes('taxi');
+
+        let show = true;
+        if (taxi === 1 && usesTaxi) show = false;
+        if (taxi === 2 && !usesTaxi) show = false;
+        if (bus === 1 && usesBus) show = false;
+
+        card.style.display = show ? '' : 'none';
+        if (show && isActive) visibleCount++;
+
+        // Recompute walk minutes
+        const base = baseWalk.get(card);
+        const newMin = Math.max(1, Math.round(base * speedMul));
+        card.querySelectorAll('[data-walk-min]').forEach(el => el.textContent = newMin);
+      });
+    });
+
+    document.getElementById('resultsEmpty').classList.toggle('hidden', visibleCount > 0);
+  }
+
+  // ---- Modal open/close ----
+  function openSheet(id) {
+    const m = document.getElementById(id);
+    m.classList.add('open');
+    m.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }
+  function closeSheet(id) {
+    const m = document.getElementById(id);
+    m.classList.remove('open');
+    m.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+  document.querySelectorAll('[data-dismiss]').forEach((el) => {
+    el.addEventListener('click', () => closeSheet(el.dataset.dismiss));
+  });
+
+  // ---- Build option list ----
+  let pending = { speed: condState.speed, taxi: condState.taxi, bus: condState.bus };
+
+  function buildOptList(listEl, opts, currentIdx, onPick) {
+    listEl.innerHTML = '';
+    opts.forEach((opt, i) => {
+      const li = document.createElement('li');
+      li.className = 'opt-item' + (i === currentIdx ? ' selected' : '');
+      li.dataset.index = i;
+      li.innerHTML = `
+        <span class="opt-label">${opt.full}</span>
+        <svg class="opt-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      `;
+      li.addEventListener('click', () => {
+        listEl.querySelectorAll('.opt-item').forEach((x) => x.classList.remove('selected'));
+        li.classList.add('selected');
+        onPick(i);
+      });
+      listEl.appendChild(li);
+    });
+  }
+
+  // Speed
+  document.getElementById('rcSpeed').addEventListener('click', () => {
+    if (document.getElementById('rcSpeed').classList.contains('disabled')) return;
+    pending.speed = condState.speed;
+    buildOptList(document.getElementById('speedList'), speedOpts, condState.speed, (i) => { pending.speed = i; });
+    openSheet('speedModal');
+  });
+  document.getElementById('speedDone').addEventListener('click', () => {
+    condState.speed = pending.speed;
+    renderChips();
+    applyFilters();
+    persist();
+    closeSheet('speedModal');
+  });
+
+  // Taxi
+  document.getElementById('rcTaxi').addEventListener('click', () => {
+    pending.taxi = condState.taxi;
+    buildOptList(document.getElementById('taxiList'), taxiOpts, condState.taxi, (i) => { pending.taxi = i; });
+    openSheet('taxiModal');
+  });
+  document.getElementById('taxiDone').addEventListener('click', () => {
+    condState.taxi = pending.taxi;
+    renderChips();
+    applyFilters();
+    persist();
+    closeSheet('taxiModal');
+  });
+
+  // Bus
+  document.getElementById('rcBus').addEventListener('click', () => {
+    if (document.getElementById('rcBus').classList.contains('disabled')) return;
+    pending.bus = condState.bus;
+    buildOptList(document.getElementById('busList'), busOpts, condState.bus, (i) => { pending.bus = i; });
+    openSheet('busModal');
+  });
+  document.getElementById('busDone').addEventListener('click', () => {
+    condState.bus = pending.bus;
+    renderChips();
+    applyFilters();
+    persist();
+    closeSheet('busModal');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    ['speedModal', 'taxiModal', 'busModal'].forEach((id) => {
+      const m = document.getElementById(id);
+      if (m && m.classList.contains('open')) closeSheet(id);
+    });
+  });
+
+  // ---- Tabs ----
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       const name = tab.dataset.tab;
@@ -396,8 +735,14 @@
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
       document.querySelector(`.tab-panel[data-panel="${name}"]`).classList.add('active');
+      applyFilters();
     });
   });
+
+  // ---- Init ----
+  renderChips();
+  applyFilters();
+})();
 </script>
 </body>
 </html>

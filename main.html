@@ -611,6 +611,8 @@
     }
 
     if (ok) {
+      localStorage.setItem('haneda:flight', flight);
+      localStorage.setItem('haneda:conditions', JSON.stringify(condState));
       window.location.href = 'route-results.html';
     }
   });
