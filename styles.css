@@ -1117,22 +1117,25 @@ a.field-input {
 
 /* Time row inside each step in the route list */
 .step .body .time {
-  font-size: 10.5px;
+  font-size: 15px;
   color: var(--navy-700);
-  font-weight: 600;
-  margin-top: 3px;
+  font-weight: 700;
+  margin-top: 5px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  flex-wrap: wrap;
+  gap: 5px;
   letter-spacing: 0.01em;
+  line-height: 1.25;
 }
-.step .body .time svg { width: 11px; height: 11px; flex-shrink: 0; }
+.step .body .time svg { width: 14px; height: 14px; flex-shrink: 0; }
 .step .body .time .train {
   margin-left: 4px;
-  padding-left: 6px;
+  padding-left: 8px;
   border-left: 1px solid var(--gray-300);
   color: var(--gray-700);
   font-weight: 500;
+  font-size: 11.5px;
 }
 .step.done .body .time { color: var(--gray-400); }
 .step.done .body .time .train { color: var(--gray-400); border-left-color: var(--gray-200); }
