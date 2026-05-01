@@ -448,11 +448,13 @@
     setCellContent('condBusIcon',   'condBusText',   busOpts,   condState.bus);
 
     const speedCell = document.getElementById('condSpeed');
+    const taxiCell  = document.getElementById('condTaxi');
     const busCell   = document.getElementById('condBus');
     const taxiOnly = (condState.taxi === 2);
 
     speedCell.classList.toggle('disabled', taxiOnly);
     busCell.classList.toggle('disabled',   taxiOnly);
+    taxiCell.classList.toggle('soft', condState.taxi === 1);
     busCell.classList.toggle('soft', !taxiOnly && condState.bus === 1);
   }
 
