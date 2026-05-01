@@ -8,28 +8,84 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <link rel="stylesheet" href="styles.css" />
 <style>
-  /* Confine Leaflet's internal z-indices so they don't cover overlays */
-  .screen-location .map-canvas { isolation: isolate; z-index: 0; }
+  /* Map container */
+  .screen-location .map-canvas { isolation: isolate; z-index: 0; position: absolute; inset: 0; }
   #map { position: absolute; inset: 0; width: 100%; height: 100%; background: #eef2f6; }
   .haneda-pin { background: transparent; border: none; }
   .haneda-pin svg { display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.28)); }
   .leaflet-container { font-family: inherit; }
   .leaflet-control-attribution { font-size: 9px; opacity: 0.75; }
 
-  /* Force overlays above the map */
-  .screen-location .status-bar { z-index: 30; }
-  .screen-location .loc-search { z-index: 20; }
-  .screen-location .zoom-controls { z-index: 20; }
-  .screen-location .locate-me { z-index: 20; }
-  .screen-location .loc-sheet { z-index: 25; }
-  .screen-location .home-ind { z-index: 30; }
+  /* Top nav: 1/3 current location + 2/3 search */
+  .loc-topnav {
+    position: absolute;
+    top: 56px;
+    left: 12px;
+    right: 12px;
+    height: 50px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: stretch;
+    z-index: 20;
+    overflow: hidden;
+  }
+  @media (max-width: 480px) {
+    .loc-topnav { top: max(12px, env(safe-area-inset-top)); }
+  }
+  .loc-current {
+    flex: 0 0 33%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    border: none;
+    background: none;
+    border-right: 1px solid #eef0f4;
+    cursor: pointer;
+    text-align: left;
+    overflow: hidden;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .loc-current:active { background: #f3f5f9; }
+  .loc-current svg { flex: 0 0 16px; color: #3957C0; }
+  .loc-current span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1c1f2a;
+    line-height: 1.2;
+  }
+  .loc-search-bar {
+    flex: 1 1 67%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+  }
+  .loc-search-bar svg { color: #9ca0aa; flex: 0 0 14px; }
+  .loc-search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 14px;
+    font-family: inherit;
+    min-width: 0;
+    color: #1c1f2a;
+  }
+  .loc-search-bar input::placeholder { color: #9ca0aa; }
 
   /* Search results dropdown */
   .search-results {
     position: absolute;
-    top: 88px;
-    left: 16px;
-    right: 16px;
+    top: 116px;
+    left: 12px;
+    right: 12px;
     background: #fff;
     border-radius: 14px;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
@@ -37,6 +93,9 @@
     overflow-y: auto;
     z-index: 22;
     display: none;
+  }
+  @media (max-width: 480px) {
+    .search-results { top: calc(max(12px, env(safe-area-inset-top)) + 60px); }
   }
   .search-results.open { display: block; }
   .search-result-item {
@@ -50,6 +109,61 @@
   .search-result-name { font-size: 14px; font-weight: 600; color: #1c1f2a; }
   .search-result-addr { font-size: 11px; color: #7a808d; margin-top: 2px; }
   .search-result-empty { padding: 14px 16px; font-size: 12px; color: #9ca0aa; text-align: center; }
+
+  /* Station popup (below pin) */
+  .station-popup {
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+    padding: 14px 16px 12px;
+    width: 240px;
+    transform: translateX(-50%);
+    pointer-events: auto;
+    display: none;
+  }
+  .station-popup.open { display: block; }
+  .station-popup::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 9px solid #fff;
+  }
+  .popup-name { font-size: 15px; font-weight: 700; color: #1c1f2a; line-height: 1.3; }
+  .popup-sub { font-size: 11px; color: #7a808d; margin-top: 2px; line-height: 1.3; }
+  .popup-dist { font-size: 12px; color: #3957C0; font-weight: 600; margin-top: 8px; }
+  .popup-cta {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    background: #3957C0;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .popup-cta:active { background: #2c45a0; }
+
+  /* Other overlays */
+  .screen-location .status-bar { z-index: 30; }
+  .screen-location .zoom-controls { z-index: 19; }
+  .screen-location .locate-me { z-index: 19; }
+  .screen-location .home-ind { z-index: 30; }
 </style>
 </head>
 <body>
@@ -68,16 +182,25 @@
 
       <div class="map-canvas">
         <div id="map"></div>
+        <div class="station-popup" id="stationPopup"></div>
       </div>
 
-      <!-- Search / back overlay -->
-      <div class="loc-search">
-        <a href="main.html" class="back">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </a>
-        <input type="text" id="searchInput" placeholder="場所・駅を検索" autocomplete="off" />
-        <div class="search-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <!-- Top nav: current location + search -->
+      <div class="loc-topnav">
+        <button class="loc-current" id="locCurrent" aria-label="現在地に戻る">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="2" x2="12" y2="4"/>
+            <line x1="12" y1="20" x2="12" y2="22"/>
+            <line x1="2" y1="12" x2="4" y2="12"/>
+            <line x1="20" y1="12" x2="22" y2="12"/>
+            <circle cx="12" cy="12" r="3" fill="currentColor"/>
+          </svg>
+          <span>現在地</span>
+        </button>
+        <div class="loc-search-bar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="場所・駅を検索" autocomplete="off" />
         </div>
       </div>
 
@@ -95,36 +218,6 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
       </button>
 
-      <!-- Bottom sheet -->
-      <div class="loc-sheet">
-        <div class="lbl">出発地として選択</div>
-        <div class="title-row">
-          <div class="pin-small">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
-          <div>
-            <div class="title-main" id="selTitle">秋葉原駅</div>
-            <div class="title-sub" id="selSub">JR山手線 · 総武線 · つくばエクスプレス</div>
-          </div>
-        </div>
-        <div class="dist">
-          <span>現在地からの距離 <span class="v" id="selDist">0 m</span></span>
-        </div>
-
-        <div class="loc-suggest">
-          <div class="loc-chip">現在地を使用</div>
-          <div class="loc-chip active">秋葉原駅</div>
-          <div class="loc-chip">末広町駅</div>
-          <div class="loc-chip">岩本町駅</div>
-          <div class="loc-chip">御徒町駅</div>
-        </div>
-
-        <a href="main.html" class="btn-confirm" id="confirmBtn">
-          この場所を出発地に設定
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </a>
-      </div>
-
       <div class="home-ind"></div>
     </div>
   </div>
@@ -132,10 +225,9 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-  // Current location: Akihabara (prototype — could be replaced with navigator.geolocation)
+  // Current location: Akihabara prototype center
   const center = [35.69838, 139.77313];
   let stations = [];
-  let selectedId = null;
 
   const map = L.map('map', { center, zoom: 16, zoomControl: false });
 
@@ -145,6 +237,7 @@
     maxZoom: 19,
   }).addTo(map);
 
+  // Pin SVG and icon factory
   const pinSVG = (color, size) => `
     <svg width="${size}" height="${size * 36 / 28}" viewBox="0 0 28 36" fill="none">
       <path d="M14 0 C6 0 0 6 0 14 C0 24 14 36 14 36 C14 36 28 24 28 14 C28 6 22 0 14 0 Z" fill="${color}"/>
@@ -162,16 +255,19 @@
     });
   };
 
-  // Pulsing "current location" marker
+  // Pulsing current-location marker (interactive — tap opens popup)
   const currentLocIcon = L.divIcon({
     className: 'haneda-pin',
     html: `<div style="width:18px;height:18px;border-radius:50%;background:#3957C0;border:3px solid #fff;box-shadow:0 0 0 6px rgba(57,87,192,0.18);"></div>`,
     iconSize: [18, 18],
     iconAnchor: [9, 9],
   });
-  L.marker(center, { icon: currentLocIcon, interactive: false, keyboard: false }).addTo(map);
+  const currentLocMarker = L.marker(center, { icon: currentLocIcon, keyboard: false }).addTo(map);
+  currentLocMarker.on('click', () => {
+    openPopup({ lat: center[0], lng: center[1], name: '現在地', sub: 'GPSで取得した位置', distM: 0 });
+  });
 
-  // Haversine distance in meters
+  // Helpers
   function distMeters(a, b) {
     const R = 6371000;
     const toRad = d => d * Math.PI / 180;
@@ -182,77 +278,83 @@
     return Math.round(2 * R * Math.asin(Math.sqrt(x)));
   }
   const walkMin = m => Math.max(1, Math.round(m / 80));
-  const formatDist = m => m === 0 ? '現在地' : `${m}m / 徒歩 約 ${walkMin(m)}分`;
-
+  const formatDist = m => m === 0 ? '現在地' : `現在地から ${m}m / 徒歩 約 ${walkMin(m)}分`;
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
+  // ----- Popup overlay (below pin) -----
+  const popupEl = document.getElementById('stationPopup');
+  L.DomEvent.disableClickPropagation(popupEl); // don't bubble clicks to map
+  let activePoint = null; // { lat, lng, name, sub, distM }
+
+  function openPopup(point) {
+    activePoint = point;
+    popupEl.innerHTML = `
+      <div class="popup-name">${escapeHtml(point.name)}</div>
+      <div class="popup-sub">${escapeHtml(point.sub || '')}</div>
+      <div class="popup-dist">${escapeHtml(formatDist(point.distM))}</div>
+      <button class="popup-cta" id="popupCta">
+        この場所を出発地点に設定
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    `;
+    popupEl.classList.add('open');
+    document.getElementById('popupCta').addEventListener('click', () => {
+      localStorage.setItem('haneda:location', point.name);
+      window.location.href = 'main.html';
+    });
+    repositionPopup();
+  }
+
+  function closePopup() {
+    popupEl.classList.remove('open');
+    activePoint = null;
+    if (searchPin) { map.removeLayer(searchPin); searchPin = null; }
+    Object.values(markers).forEach(m => m.setIcon(makeIcon(false)));
+  }
+
+  function repositionPopup() {
+    if (!activePoint) return;
+    const p = map.latLngToContainerPoint([activePoint.lat, activePoint.lng]);
+    popupEl.style.left = p.x + 'px';
+    popupEl.style.top = (p.y + 12) + 'px';
+  }
+
+  map.on('move zoom', repositionPopup);
+  map.on('click', closePopup);
+
+  // ----- Station markers -----
   const markers = {};
   let searchPin = null;
 
-  function clearMarkers() {
-    Object.values(markers).forEach(m => map.removeLayer(m));
-    Object.keys(markers).forEach(k => delete markers[k]);
+  function highlightStation(id) {
+    Object.entries(markers).forEach(([key, mk]) => mk.setIcon(makeIcon(key === id)));
+    if (searchPin) { map.removeLayer(searchPin); searchPin = null; }
   }
 
   function renderStations() {
-    clearMarkers();
+    Object.values(markers).forEach(m => map.removeLayer(m));
+    Object.keys(markers).forEach(k => delete markers[k]);
     stations.forEach(s => {
-      const m = L.marker([s.lat, s.lng], { icon: makeIcon(s.id === selectedId), title: s.id }).addTo(map);
-      m.on('click', () => selectStation(s.id));
+      const m = L.marker([s.lat, s.lng], { icon: makeIcon(false), title: s.id }).addTo(map);
+      m.on('click', () => {
+        highlightStation(s.id);
+        map.panTo([s.lat, s.lng]);
+        openPopup({ lat: s.lat, lng: s.lng, name: s.id, sub: s.sub, distM: s.distM });
+      });
       markers[s.id] = m;
     });
   }
 
-  function renderChips() {
-    const container = document.querySelector('.loc-suggest');
-    const top = stations.slice(0, 4);
-    container.innerHTML =
-      '<div class="loc-chip">現在地を使用</div>' +
-      top.map(s => `<div class="loc-chip${s.id === selectedId ? ' active' : ''}">${escapeHtml(s.id)}</div>`).join('');
-    bindChips();
-  }
+  // ----- Current location button -----
+  document.getElementById('locCurrent').addEventListener('click', () => {
+    map.setView(center, 16);
+    highlightStation(null);
+    openPopup({ lat: center[0], lng: center[1], name: '現在地', sub: 'GPSで取得した位置', distM: 0 });
+  });
 
-  function setSheet(title, sub, distText) {
-    document.getElementById('selTitle').textContent = title;
-    document.getElementById('selSub').textContent = sub;
-    document.getElementById('selDist').textContent = distText;
-  }
-
-  function selectStation(id) {
-    const s = stations.find(x => x.id === id);
-    if (!s) return;
-    selectedId = id;
-    if (searchPin) { map.removeLayer(searchPin); searchPin = null; }
-    Object.entries(markers).forEach(([key, mk]) => mk.setIcon(makeIcon(key === id)));
-    setSheet(s.id, s.sub, formatDist(s.distM));
-    document.querySelectorAll('.loc-chip').forEach(c => {
-      c.classList.toggle('active', c.textContent.trim() === s.id);
-    });
-    map.panTo([s.lat, s.lng]);
-  }
-
-  function bindChips() {
-    document.querySelectorAll('.loc-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const label = chip.textContent.trim();
-        if (label === '現在地を使用') {
-          selectedId = null;
-          document.querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          setSheet('現在地', 'GPSで取得した位置', '0 m');
-          if (searchPin) { map.removeLayer(searchPin); searchPin = null; }
-          Object.values(markers).forEach(mk => mk.setIcon(makeIcon(false)));
-          map.setView(center, 16);
-        } else if (stations.find(s => s.id === label)) {
-          selectStation(label);
-        }
-      });
-    });
-  }
-
-  // Fallback list if Overpass fails
+  // ----- Nearby station load (Overpass) -----
   const FALLBACK_STATIONS = [
     { id: '秋葉原駅', sub: 'JR東日本', lat: 35.69838, lng: 139.77313 },
     { id: '末広町駅', sub: '東京メトロ', lat: 35.70225, lng: 139.77131 },
@@ -262,7 +364,7 @@
 
   async function loadNearbyStations() {
     const radius = 800;
-    const q = `[out:json][timeout:15];(node["railway"="station"](around:${radius},${center[0]},${center[1]});node["public_transport"="station"]["station"!~"."](around:${radius},${center[0]},${center[1]}););out body;`;
+    const q = `[out:json][timeout:15];(node["railway"="station"](around:${radius},${center[0]},${center[1]});node["public_transport"="station"](around:${radius},${center[0]},${center[1]}););out body;`;
     let raw = [];
     try {
       const res = await fetch('https://overpass-api.de/api/interpreter', {
@@ -279,18 +381,16 @@
     const list = [];
     raw.forEach(e => {
       const t = e.tags || {};
-      let name = t['name:ja'] || t.name;
+      const name = t['name:ja'] || t.name;
       if (!name || seen.has(name)) return;
       seen.add(name);
       const operator = t.operator || t.network || '';
-      const sub = operator || '駅';
-      const d = distMeters(center, [e.lat, e.lon]);
       list.push({
         id: name.endsWith('駅') ? name : name + '駅',
-        sub,
+        sub: operator || '駅',
         lat: e.lat,
         lng: e.lon,
-        distM: d,
+        distM: distMeters(center, [e.lat, e.lon]),
       });
     });
 
@@ -302,16 +402,10 @@
 
     list.sort((a, b) => a.distM - b.distM);
     stations = list;
-    selectedId = stations[0]?.id || null;
     renderStations();
-    renderChips();
-    if (selectedId) {
-      const s = stations[0];
-      setSheet(s.id, s.sub, formatDist(s.distM));
-    }
   }
 
-  // ----- Search via Photon (OSM-based, no API key) -----
+  // ----- Search via Photon -----
   const searchInput = document.getElementById('searchInput');
   const searchResults = document.getElementById('searchResults');
   let searchTimer = null;
@@ -332,7 +426,7 @@
   });
 
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.loc-search') && !e.target.closest('.search-results')) {
+    if (!e.target.closest('.loc-topnav') && !e.target.closest('.search-results')) {
       searchResults.classList.remove('open');
     }
   });
@@ -350,11 +444,9 @@
       }
       searchResults.innerHTML = features.map((f, i) => {
         const p = f.properties;
-        const name = p.name;
-        const addrParts = [p.street, p.district, p.city, p.state].filter(Boolean);
-        const addr = addrParts.join(' / ') || p.country || '';
+        const addr = [p.street, p.district, p.city, p.state].filter(Boolean).join(' / ') || p.country || '';
         return `<div class="search-result-item" data-idx="${i}">
-          <div class="search-result-name">${escapeHtml(name)}</div>
+          <div class="search-result-name">${escapeHtml(p.name)}</div>
           <div class="search-result-addr">${escapeHtml(addr)}</div>
         </div>`;
       }).join('');
@@ -376,33 +468,30 @@
     const sub = [p.street, p.city].filter(Boolean).join(' / ') || p.osm_value || '検索結果';
     const d = distMeters(center, [lat, lng]);
 
+    Object.values(markers).forEach(m => m.setIcon(makeIcon(false)));
     if (searchPin) map.removeLayer(searchPin);
     searchPin = L.marker([lat, lng], { icon: makeIcon(true) }).addTo(map);
+    searchPin.on('click', () => openPopup({ lat, lng, name, sub, distM: d }));
+
     map.setView([lat, lng], 16);
-
-    selectedId = null;
-    Object.values(markers).forEach(mk => mk.setIcon(makeIcon(false)));
-    document.querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
-
-    setSheet(name, sub, formatDist(d));
+    openPopup({ lat, lng, name, sub, distM: d });
 
     searchResults.classList.remove('open');
     searchInput.blur();
   }
 
-  // Custom zoom controls wired to Leaflet
-  document.querySelector('.zoom-controls button[aria-label="zoom in"]').addEventListener('click', () => map.zoomIn());
-  document.querySelector('.zoom-controls button[aria-label="zoom out"]').addEventListener('click', () => map.zoomOut());
-
-  // Locate-me: pan back to current location
-  document.querySelector('.locate-me').addEventListener('click', () => map.setView(center, 16));
-
-  // Confirm: save and return to main
-  document.getElementById('confirmBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    const title = document.getElementById('selTitle').textContent.trim();
-    if (title) localStorage.setItem('haneda:location', title);
-    window.location.href = 'main.html';
+  // ----- Map controls -----
+  document.querySelector('.zoom-controls button[aria-label="zoom in"]').addEventListener('click', (e) => {
+    e.stopPropagation();
+    map.zoomIn();
+  });
+  document.querySelector('.zoom-controls button[aria-label="zoom out"]').addEventListener('click', (e) => {
+    e.stopPropagation();
+    map.zoomOut();
+  });
+  document.querySelector('.locate-me').addEventListener('click', (e) => {
+    e.stopPropagation();
+    map.setView(center, 16);
   });
 
   // Init
