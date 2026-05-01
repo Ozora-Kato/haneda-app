@@ -43,8 +43,10 @@
           <div class="field-label">フライトナンバー</div>
           <div class="field-input">
             <div class="lead"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></div>
-            <input type="text" placeholder="例) NH123" value="NH123" />
-            <div class="trail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+            <input id="flightInput" type="text" placeholder="例) NH123" autocomplete="off" />
+            <button type="button" id="flightClear" class="trail trail-btn" aria-label="クリア" hidden>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            </button>
           </div>
         </div>
 
@@ -54,9 +56,20 @@
             <div class="lead lead-locate">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
             </div>
-            <span class="field-value">秋葉原駅</span>
+            <span class="field-value is-placeholder" id="locationValue">現在地を選択する</span>
             <div class="trail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
           </a>
+        </div>
+
+        <div class="field">
+          <div class="field-label">日時</div>
+          <button type="button" class="field-input field-select" id="datetimeOpen">
+            <div class="lead lead-locate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <span class="field-value" id="datetimeValue"></span>
+            <div class="trail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+          </button>
         </div>
 
         <button class="btn-search" type="submit">
@@ -111,8 +124,211 @@
       </div>
 
       <div class="home-ind"></div>
+
+      <!-- Date/time picker modal -->
+      <div class="dt-modal" id="dtModal" aria-hidden="true">
+        <div class="dt-backdrop" id="dtBackdrop"></div>
+        <div class="dt-sheet" role="dialog" aria-modal="true" aria-labelledby="dtTitle">
+          <div class="dt-handle"></div>
+          <div class="dt-header">
+            <button type="button" class="dt-cancel" id="dtCancel">キャンセル</button>
+            <h3 id="dtTitle">日時を選択</h3>
+            <span class="dt-spacer"></span>
+          </div>
+
+          <div class="dt-toggle" role="tablist">
+            <button type="button" class="dt-toggle-btn active" data-mode="depart" role="tab">出発</button>
+            <button type="button" class="dt-toggle-btn" data-mode="arrive" role="tab">到着</button>
+          </div>
+
+          <div class="dt-picker">
+            <div class="dt-wheel" id="wheelDate" data-key="date"></div>
+            <div class="dt-wheel" id="wheelHour" data-key="hour"></div>
+            <div class="dt-wheel-sep" aria-hidden="true">:</div>
+            <div class="dt-wheel" id="wheelMinute" data-key="minute"></div>
+            <div class="dt-indicator" aria-hidden="true"></div>
+          </div>
+
+          <div class="dt-footer">
+            <button type="button" class="dt-done" id="dtDone">完了</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+(() => {
+  const DAYS_JA = ['日','月','火','水','木','金','土'];
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const fmtFull = (d) => `${d.getMonth()+1}月${d.getDate()}日 (${DAYS_JA[d.getDay()]})`;
+  const fmtShort = (d) => `${d.getMonth()+1}/${d.getDate()} (${DAYS_JA[d.getDay()]})`;
+
+  // ---- Generate picker data ----
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const RANGE_BACK = 1;     // include yesterday
+  const RANGE_AHEAD = 90;   // 90 days ahead
+  const datesData = [];
+  for (let i = -RANGE_BACK; i <= RANGE_AHEAD; i++) {
+    const d = new Date(startOfToday);
+    d.setDate(startOfToday.getDate() + i);
+    datesData.push({ date: d, full: fmtFull(d), short: fmtShort(d) });
+  }
+  const todayIdx = RANGE_BACK; // index of today
+  const hoursData = Array.from({length: 24}, (_, i) => pad2(i));
+  const minutesData = Array.from({length: 12}, (_, i) => pad2(i * 5));
+
+  const ITEM_H = 40;
+  const WHEEL_H = 200;
+  const PAD = (WHEEL_H - ITEM_H) / 2; // 80
+
+  function buildWheel(wheelEl, items, getLabel) {
+    const ul = document.createElement('ul');
+    ul.className = 'dt-options';
+    items.forEach((it, i) => {
+      const li = document.createElement('li');
+      li.textContent = getLabel ? getLabel(it) : it;
+      li.dataset.index = i;
+      ul.appendChild(li);
+    });
+    wheelEl.innerHTML = '';
+    wheelEl.appendChild(ul);
+  }
+
+  function snapTo(wheelEl, idx) {
+    wheelEl.scrollTop = idx * ITEM_H;
+    updateAria(wheelEl);
+  }
+
+  function selectedIndex(wheelEl) {
+    return Math.max(0, Math.round(wheelEl.scrollTop / ITEM_H));
+  }
+
+  function updateAria(wheelEl) {
+    const idx = selectedIndex(wheelEl);
+    wheelEl.querySelectorAll('li').forEach((li, i) => {
+      li.setAttribute('aria-current', i === idx ? 'true' : 'false');
+    });
+  }
+
+  // ---- Build wheels ----
+  const wheels = {
+    date:   document.getElementById('wheelDate'),
+    hour:   document.getElementById('wheelHour'),
+    minute: document.getElementById('wheelMinute'),
+  };
+  buildWheel(wheels.date, datesData, (d) => d.short);
+  buildWheel(wheels.hour, hoursData);
+  buildWheel(wheels.minute, minutesData);
+
+  // ---- State ----
+  const now = new Date();
+  let state = {
+    dateIdx: todayIdx,
+    hourIdx: now.getHours(),
+    minuteIdx: Math.round(now.getMinutes() / 5) % minutesData.length,
+    mode: 'depart', // 'depart' | 'arrive'
+  };
+
+  // ---- Display ----
+  const datetimeValueEl = document.getElementById('datetimeValue');
+  function renderField() {
+    const d = datesData[state.dateIdx].full;
+    const h = hoursData[state.hourIdx];
+    const m = minutesData[state.minuteIdx];
+    const mode = state.mode === 'depart' ? '出発' : '到着';
+    datetimeValueEl.textContent = `${d} ${h}:${m} ${mode}`;
+  }
+  renderField();
+
+  // ---- Modal open/close ----
+  const modal = document.getElementById('dtModal');
+  const openBtn = document.getElementById('datetimeOpen');
+  const cancelBtn = document.getElementById('dtCancel');
+  const backdropEl = document.getElementById('dtBackdrop');
+  const doneBtn = document.getElementById('dtDone');
+
+  // Snap wheel scroll on selection update
+  Object.values(wheels).forEach((w) => {
+    let timer;
+    w.addEventListener('scroll', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => updateAria(w), 60);
+    });
+  });
+
+  // Toggle (depart/arrive)
+  document.querySelectorAll('.dt-toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.dt-toggle-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.mode = btn.dataset.mode;
+    });
+  });
+
+  function openModal() {
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    // Sync wheels to state
+    requestAnimationFrame(() => {
+      snapTo(wheels.date, state.dateIdx);
+      snapTo(wheels.hour, state.hourIdx);
+      snapTo(wheels.minute, state.minuteIdx);
+    });
+    // Sync toggle
+    document.querySelectorAll('.dt-toggle-btn').forEach((b) => {
+      b.classList.toggle('active', b.dataset.mode === state.mode);
+    });
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+
+  openBtn.addEventListener('click', openModal);
+  cancelBtn.addEventListener('click', closeModal);
+  backdropEl.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+
+  doneBtn.addEventListener('click', () => {
+    state.dateIdx = selectedIndex(wheels.date);
+    state.hourIdx = selectedIndex(wheels.hour);
+    state.minuteIdx = selectedIndex(wheels.minute);
+    renderField();
+    closeModal();
+  });
+
+  // ---- Flight number clear ----
+  const flightInput = document.getElementById('flightInput');
+  const flightClear = document.getElementById('flightClear');
+  function syncFlightClear() {
+    flightClear.hidden = !flightInput.value;
+  }
+  flightInput.addEventListener('input', syncFlightClear);
+  flightClear.addEventListener('click', () => {
+    flightInput.value = '';
+    syncFlightClear();
+    flightInput.focus();
+  });
+  syncFlightClear();
+
+  // ---- Current location: read from localStorage ----
+  const locEl = document.getElementById('locationValue');
+  const stored = localStorage.getItem('haneda:location');
+  if (stored) {
+    locEl.textContent = stored;
+    locEl.classList.remove('is-placeholder');
+  } else {
+    locEl.textContent = '現在地を選択する';
+    locEl.classList.add('is-placeholder');
+  }
+})();
+</script>
 </body>
 </html>

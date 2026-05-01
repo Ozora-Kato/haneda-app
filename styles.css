@@ -2279,8 +2279,256 @@ button { font-family: inherit; cursor: pointer; }
   text-align: center;
 }
 
-/* Prevent body scroll when drawer open on mobile */
-body.drawer-open { overflow: hidden; }
+/* Prevent body scroll when drawer or modal open on mobile */
+body.drawer-open,
+body.modal-open { overflow: hidden; }
+
+/* Field placeholder state (for selectable fields with no value) */
+.field-value.is-placeholder {
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+/* Trail as a clickable button (e.g., flight clear) */
+.trail-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--gray-400);
+  transition: background .15s ease, color .15s ease;
+}
+.trail-btn:hover { background: var(--gray-200); color: var(--gray-700); }
+.trail-btn[hidden] { display: none; }
+
+/* =========================================
+   Date / Time picker modal
+   ========================================= */
+.dt-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  visibility: hidden;
+  pointer-events: none;
+}
+.dt-modal.open {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.dt-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 20, 40, 0);
+  transition: background .25s ease;
+}
+.dt-modal.open .dt-backdrop {
+  background: rgba(13, 20, 40, 0.45);
+}
+
+.dt-sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--white);
+  border-radius: 22px 22px 0 0;
+  padding-bottom: 22px;
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+  box-shadow: 0 -8px 30px -10px rgba(13, 27, 75, 0.25);
+}
+.dt-modal.open .dt-sheet {
+  transform: translateY(0);
+}
+
+.dt-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--gray-300);
+  border-radius: 2px;
+  margin: 12px auto 6px;
+}
+
+.dt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.dt-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+.dt-cancel {
+  background: none;
+  border: none;
+  padding: 6px 4px;
+  font-size: 13px;
+  color: var(--gray-500);
+  cursor: pointer;
+  font-family: inherit;
+}
+.dt-cancel:hover { color: var(--gray-900); }
+.dt-spacer { width: 60px; }
+
+/* Toggle (depart / arrive) */
+.dt-toggle {
+  display: flex;
+  background: var(--gray-100);
+  border-radius: 14px;
+  padding: 4px;
+  margin: 14px 22px 14px;
+  border: 1px solid var(--gray-200);
+}
+.dt-toggle-btn {
+  flex: 1;
+  padding: 11px 8px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-500);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .2s ease;
+}
+.dt-toggle-btn.active {
+  background: var(--white);
+  color: var(--navy-700);
+  box-shadow: 0 2px 8px rgba(13, 27, 75, 0.12);
+}
+
+/* Picker (drum-roll wheels) */
+.dt-picker {
+  position: relative;
+  display: flex;
+  height: 200px;
+  margin: 0 22px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.dt-wheel {
+  flex: 1;
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 1;
+}
+.dt-wheel:first-child { flex: 1.5; }
+.dt-wheel::-webkit-scrollbar { display: none; }
+.dt-options {
+  list-style: none;
+  margin: 0;
+  padding: 80px 0;
+}
+.dt-options li {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--gray-400);
+  scroll-snap-align: center;
+  font-feature-settings: "tnum" 1;
+  transition: color .15s ease, font-size .15s ease;
+  user-select: none;
+}
+.dt-options li[aria-current="true"] {
+  color: var(--gray-900);
+  font-weight: 700;
+  font-size: 18px;
+}
+.dt-options li[aria-current="true"] + li,
+.dt-options li:has(+ li[aria-current="true"]) {
+  opacity: 0.85;
+}
+
+/* Center selection bar */
+.dt-indicator {
+  position: absolute;
+  top: 50%;
+  left: 6px; right: 6px;
+  height: 40px;
+  transform: translateY(-50%);
+  background: rgba(40, 68, 160, 0.06);
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Top/bottom fade */
+.dt-picker::before,
+.dt-picker::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 70px;
+  pointer-events: none;
+  z-index: 3;
+}
+.dt-picker::before {
+  top: 0;
+  background: linear-gradient(180deg, var(--gray-100), rgba(247, 249, 252, 0));
+}
+.dt-picker::after {
+  bottom: 0;
+  background: linear-gradient(0deg, var(--gray-100), rgba(247, 249, 252, 0));
+}
+
+/* Time separator between hour and minute */
+.dt-wheel-sep {
+  flex: 0 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gray-700);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Done button */
+.dt-footer {
+  padding: 16px 22px 0;
+}
+.dt-done {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(135deg, #2844a0 0%, #3d5cc8 100%);
+  color: var(--white);
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 8px 20px -8px rgba(40, 68, 160, 0.5);
+  transition: transform .15s ease;
+}
+.dt-done:hover { transform: translateY(-1px); }
+
+/* When opened on mobile, lift bottom for safe area */
+@media (max-width: 480px) {
+  .dt-sheet {
+    padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 
 /* Flow hint (small non-intrusive label on desktop) */
 .flow-hint {
