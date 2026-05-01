@@ -15,6 +15,75 @@
   .od-row .flight-num { font-size: 15px; letter-spacing: 0.04em; }
   .od-dot.flight { background: #f59e0b; }
 
+  /* Accordion: summary header */
+  .od-accordion .od-summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1c1f2a;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .od-accordion .sum-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+  .od-accordion .sum-dot.from { background: #3957C0; }
+  .od-accordion .sum-dot.to { background: #f59e0b; }
+  .od-accordion .sum-from,
+  .od-accordion .sum-to {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  .od-accordion .sum-arrow {
+    color: #9ca0aa;
+    margin: 0 2px;
+    flex-shrink: 0;
+  }
+  .od-accordion .sum-flight {
+    background: #fff7e6;
+    color: #b45309;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .od-accordion .sum-chev {
+    color: #9ca0aa;
+    flex-shrink: 0;
+    margin-left: 4px;
+    transition: transform 0.2s ease;
+  }
+  .od-accordion:not(.collapsed) .sum-chev { transform: rotate(180deg); }
+
+  /* Hide details when collapsed */
+  .od-accordion.collapsed > .od-row,
+  .od-accordion.collapsed > .od-line { display: none; }
+
+  /* Visual gap between summary and details when expanded */
+  .od-accordion:not(.collapsed) .od-summary {
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eef0f4;
+  }
+
   /* Empty state when filters hide all results */
   .results-empty {
     padding: 32px 20px;
@@ -90,8 +159,17 @@
 
       <div class="results-body">
 
-      <!-- Origin / Flight / Destination -->
-      <div class="od-card">
+      <!-- Origin / Flight / Destination (accordion) -->
+      <div class="od-card od-accordion collapsed" id="odCard">
+        <button class="od-summary" id="odToggle" type="button" aria-expanded="false">
+          <span class="sum-dot from"></span>
+          <span class="sum-from" id="sumFrom">秋葉原駅</span>
+          <span class="sum-arrow">→</span>
+          <span class="sum-dot to"></span>
+          <span class="sum-to" id="sumTo">羽田空港 第2T</span>
+          <span class="sum-flight" id="sumFlight">NH123</span>
+          <svg class="sum-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
         <div class="od-row">
           <span class="od-dot from"></span>
           <div class="od-content">
@@ -540,6 +618,20 @@
   document.getElementById('odFlightSub').textContent = `${flightInfo.depart}発 · ${flightInfo.dest} 行`;
   document.getElementById('odTo').textContent = `羽田空港 ${flightInfo.terminal}`;
   document.getElementById('odToSub').textContent = `搭乗口 ${flightInfo.gate}`;
+
+  // Summary line (always visible)
+  const termShort = (flightInfo.terminal || '').replace('第', '').replace('ターミナル', 'T');
+  document.getElementById('sumFrom').textContent = fromLoc;
+  document.getElementById('sumTo').textContent = termShort ? `羽田空港 ${termShort}` : '羽田空港';
+  document.getElementById('sumFlight').textContent = flight;
+
+  // Accordion toggle
+  const odCardEl = document.getElementById('odCard');
+  const odToggleBtn = document.getElementById('odToggle');
+  odToggleBtn.addEventListener('click', () => {
+    const isNowCollapsed = odCardEl.classList.toggle('collapsed');
+    odToggleBtn.setAttribute('aria-expanded', isNowCollapsed ? 'false' : 'true');
+  });
 
   // ---- Conditions ----
   const ICONS = {
